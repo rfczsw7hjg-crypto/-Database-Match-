@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>متجر ماتشا | الحسابات والعناوين</title>
+  <title>ماتشا بوتيك | إدارة الحسابات والمستخدمين</title>
   <style>
     :root {
-      --matcha-dark: #2f4832;
-      --matcha: #4f7752;
-      --matcha-soft: #dce8d9;
-      --matcha-mist: #f4f8f3;
+      --matcha-dark: #2b442e;
+      --matcha: #4b744e;
+      --matcha-soft: #d9e7d6;
+      --matcha-mist: #f3f8f2;
       --cream: #fbfaf6;
-      --ink: #222b23;
-      --muted: #657467;
-      --border: #dfe8dc;
-      --danger: #b83b3b;
-      --success: #2b6e3f;
+      --ink: #212a22;
+      --muted: #647366;
+      --border: #dde7db;
+      --danger: #b43838;
+      --success: #286b3c;
     }
 
     * {
@@ -27,8 +27,8 @@
 
     body {
       background:
-        radial-gradient(circle at 12% 10%, rgba(163, 196, 158, 0.25), transparent 35%),
-        radial-gradient(circle at 88% 20%, rgba(79, 119, 82, 0.14), transparent 40%),
+        radial-gradient(circle at 12% 10%, rgba(163, 196, 158, 0.25), transparent 36%),
+        radial-gradient(circle at 88% 18%, rgba(75, 116, 78, 0.14), transparent 42%),
         var(--cream);
       color: var(--ink);
       line-height: 1.65;
@@ -68,7 +68,7 @@
       display: grid;
       place-items: center;
       font-size: 1.2rem;
-      box-shadow: 0 6px 14px rgba(47, 72, 50, 0.18);
+      box-shadow: 0 6px 14px rgba(43, 68, 46, 0.18);
     }
 
     nav {
@@ -97,11 +97,11 @@
     }
 
     .hero {
-      max-width: 780px;
+      max-width: 760px;
       margin: 1.8rem auto 0;
       padding: 1.6rem 1.8rem;
       border-radius: 24px 8px 24px 24px;
-      background: linear-gradient(135deg, #e8f1e6 0%, #f6faf5 60%, #e1ece0 100%);
+      background: linear-gradient(135deg, #e7f0e5 0%, #f6faf5 62%, #dfece0 100%);
       border: 1px solid var(--border);
       position: relative;
       overflow: hidden;
@@ -112,7 +112,7 @@
       position: absolute;
       left: 18px;
       bottom: -10px;
-      font-size: 4.5rem;
+      font-size: 4.4rem;
       opacity: 0.14;
       transform: rotate(-12deg);
       pointer-events: none;
@@ -131,7 +131,7 @@
     }
 
     .hero h1 {
-      font-size: 1.55rem;
+      font-size: 1.5rem;
       color: var(--matcha-dark);
       margin-bottom: 6px;
     }
@@ -141,9 +141,8 @@
       font-size: 0.95rem;
     }
 
-    /* ترتيب النماذج تحت بعض */
     .stack-container {
-      max-width: 780px;
+      max-width: 760px;
       margin: 1.5rem auto 3rem;
       padding: 0 1rem;
       display: flex;
@@ -156,8 +155,7 @@
       border: 1px solid var(--border);
       border-radius: 22px;
       padding: 1.6rem;
-      box-shadow: 0 10px 26px rgba(47, 72, 50, 0.05);
-      position: relative;
+      box-shadow: 0 10px 26px rgba(43, 68, 46, 0.05);
     }
 
     .card-header {
@@ -165,7 +163,7 @@
       align-items: center;
       gap: 12px;
       margin-bottom: 1.2rem;
-      padding-bottom: 0.8rem;
+      padding-bottom: 0.85rem;
       border-bottom: 1px dashed var(--border);
     }
 
@@ -192,6 +190,35 @@
       color: var(--muted);
     }
 
+    .mode-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 1.2rem;
+      background: var(--matcha-mist);
+      padding: 5px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .mode-btn {
+      border: none;
+      background: transparent;
+      color: var(--matcha-dark);
+      padding: 9px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.92rem;
+      transition: 0.2s;
+    }
+
+    .mode-btn.active {
+      background: #fff;
+      color: var(--matcha-dark);
+      box-shadow: 0 3px 10px rgba(43, 68, 46, 0.08);
+    }
+
     .form-group {
       margin-bottom: 1rem;
     }
@@ -204,10 +231,10 @@
       color: var(--ink);
     }
 
-    input, select {
+    input {
       width: 100%;
       padding: 11px 14px;
-      border: 1px solid #d4dfd2;
+      border: 1px solid #d3dfd1;
       border-radius: 12px;
       font-size: 0.95rem;
       background: var(--matcha-mist);
@@ -215,11 +242,11 @@
       transition: 0.2s;
     }
 
-    input:focus, select:focus {
+    input:focus {
       outline: none;
       background: #fff;
       border-color: var(--matcha);
-      box-shadow: 0 0 0 3px rgba(79, 119, 82, 0.14);
+      box-shadow: 0 0 0 3px rgba(75, 116, 78, 0.14);
     }
 
     .btn {
@@ -233,12 +260,25 @@
       font-size: 0.98rem;
       font-weight: 600;
       transition: transform 0.15s ease, box-shadow 0.2s ease;
-      box-shadow: 0 6px 16px rgba(47, 72, 50, 0.16);
+      box-shadow: 0 6px 16px rgba(43, 68, 46, 0.16);
     }
 
     .btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 8px 20px rgba(47, 72, 50, 0.22);
+      box-shadow: 0 8px 20px rgba(43, 68, 46, 0.22);
+    }
+
+    .btn-secondary {
+      margin-top: 10px;
+      width: 100%;
+      background: var(--matcha-mist);
+      color: var(--matcha-dark);
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
     }
 
     .msg {
@@ -263,9 +303,28 @@
       border: 1px solid #b7e1c4;
     }
 
+    .session-box {
+      background: var(--matcha-mist);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.1rem 1.2rem;
+    }
+
+    .role-pill {
+      display: inline-block;
+      background: #fff;
+      color: var(--matcha-dark);
+      border: 1px solid var(--matcha-soft);
+      padding: 3px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
     .sql-box {
       display: none;
-      background: #1b221c;
+      background: #1a211b;
       color: #dceadc;
       padding: 1.5rem;
       border-radius: 18px;
@@ -274,7 +333,7 @@
       overflow-x: auto;
       font-family: Consolas, monospace;
       font-size: 0.88rem;
-      border: 1px solid #2e3b30;
+      border: 1px solid #2d3a2f;
     }
   </style>
 </head>
@@ -286,39 +345,44 @@
       <span>ماتشا بوتيك</span>
     </div>
     <nav>
-      <button class="active" onclick="switchSection('accounts', this)">الحساب والعنوان</button>
+      <button class="active" onclick="switchSection('accounts', this)">الحساب والمستخدمون</button>
       <button onclick="switchSection('sql', this)">مرجع SQL</button>
     </nav>
   </header>
 
   <section class="hero">
-    <span class="hero-tag">✨ تجربة ماتشا متكاملة</span>
+    <span class="hero-tag">🔐 نظام إدارة الحسابات والمستخدمين</span>
     <h1>أهلاً بكِ في متجر الماتشا</h1>
-    <p>سجّلي حسابكِ أو ادخلي إليه، وأضيفي عنوان التوصيل بكل سهولة وأمان.</p>
+    <p>أنشئي حساباً جديداً أو سجّلي الدخول لإدارة حسابكِ والتحقق من الصلاحيات بأمان.</p>
   </section>
 
   <main class="stack-container">
     <div id="accounts-section" style="display:flex; flex-direction:column; gap:1.5rem;">
 
-      <!-- النموذج الأول: إنشاء حساب / تسجيل دخول -->
+      <!-- البطاقة الأولى: إنشاء حساب / تسجيل دخول -->
       <section class="card">
         <div class="card-header">
           <div class="card-icon">👤</div>
           <div>
             <h2>إنشاء حساب / تسجيل الدخول</h2>
-            <span>إدارة بيانات الحساب والصلاحيات بشكل آمن</span>
+            <span>الحسابات الجديدة تُسجّل بصلاحية (عميل) تلقائياً لحماية النظام</span>
           </div>
         </div>
 
-        <form id="userForm" onsubmit="handleUserSubmit(event)">
-          <div class="form-group">
+        <div class="mode-switch">
+          <button type="button" id="registerTab" class="mode-btn active" onclick="setAuthMode('register')">إنشاء حساب جديد</button>
+          <button type="button" id="loginTab" class="mode-btn" onclick="setAuthMode('login')">تسجيل الدخول</button>
+        </div>
+
+        <form id="authForm" onsubmit="handleAuthSubmit(event)">
+          <div class="form-group" id="nameGroup">
             <label for="fullName">الاسم الكامل</label>
-            <input type="text" id="fullName" placeholder="اكتبي اسمكِ الكامل" required />
+            <input type="text" id="fullName" placeholder="اكتبي اسمكِ الكامل" />
           </div>
 
           <div class="form-group">
-            <label for="email">البريد الإلكتروني أو الجوال</label>
-            <input type="text" id="email" placeholder="example@mail.com أو 05xxxxxxxx" required />
+            <label for="contact">البريد الإلكتروني أو رقم الجوال</label>
+            <input type="text" id="contact" placeholder="example@mail.com أو 05xxxxxxxx" required />
           </div>
 
           <div class="form-group">
@@ -326,53 +390,27 @@
             <input type="password" id="password" placeholder="••••••••" required />
           </div>
 
-          <div class="form-group">
-            <label for="role">نوع الحساب</label>
-            <select id="role">
-              <option value="customer">عميل</option>
-              <option value="admin">مشرف</option>
-            </select>
-          </div>
-
-          <button type="submit" class="btn">حفظ الحساب</button>
-          <div id="userMsg" class="msg"></div>
+          <button type="submit" id="submitBtn" class="btn">إنشاء الحساب</button>
+          <div id="authMsg" class="msg"></div>
         </form>
       </section>
 
-      <!-- النموذج الثاني: إضافة عنوان وتوصيل (تحت الأول مباشرة) -->
+      <!-- البطاقة الثانية: حالة الحساب والصلاحيات -->
       <section class="card">
         <div class="card-header">
-          <div class="card-icon">📍</div>
+          <div class="card-icon">🛡️</div>
           <div>
-            <h2>إضافة عنوان وتوصيل</h2>
-            <span>حددي موقعكِ لتسهيل توصيل طلبات الماتشا</span>
+            <h2>حالة الحساب والصلاحيات</h2>
+            <span>التحقق من هوية المستخدم ونوع الصلاحية (عميل أو مشرف)</span>
           </div>
         </div>
 
-        <form id="addressForm" onsubmit="handleAddressSubmit(event)">
-          <div class="form-group">
-            <label for="city">المدينة</label>
-            <input type="text" id="city" placeholder="مثال: الدمام" required />
-          </div>
-
-          <div class="form-group">
-            <label for="district">الحي</label>
-            <input type="text" id="district" placeholder="مثال: الشاطئ" required />
-          </div>
-
-          <div class="form-group">
-            <label for="street">الشارع ووصف الموقع</label>
-            <input type="text" id="street" placeholder="مثال: شارع الخليج، رقم المنزل أو وصف قريب" required />
-          </div>
-
-          <button type="submit" class="btn">حفظ العنوان</button>
-          <div id="addressMsg" class="msg"></div>
-        </form>
+        <div id="sessionView" class="session-box"></div>
       </section>
 
     </div>
 
-    <!-- مرجع SQL -->
+    <!-- مرجع SQL الخاص بجدول Users -->
     <div id="sql-section" class="sql-box">
 <pre>
 CREATE TABLE Users (
@@ -381,87 +419,136 @@ CREATE TABLE Users (
     contact_info VARCHAR(150) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     role ENUM('customer', 'admin') NOT NULL DEFAULT 'customer',
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE Addresses (
-    address_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    city VARCHAR(80) NOT NULL,
-    district VARCHAR(100) NOT NULL,
-    street_location VARCHAR(255) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 </pre>
     </div>
   </main>
 
   <script>
-    function showMessage(el, text, type) {
-      el.textContent = text;
-      el.className = `msg ${type}`;
+    let authMode = "register";
+
+    // حساب مشرف افتراضي للتجربة فقط (بدون إمكانية اختيار الأدمن من نموذج التسجيل العادي)
+    const defaultUsers = [
+      {
+        id: 1,
+        fullName: "مشرفة النظام",
+        contact: "admin@matcha.sa",
+        passwordMask: "••••••••",
+        role: "admin"
+      }
+    ];
+
+    function getUsers() {
+      const saved = JSON.parse(localStorage.getItem("matcha_users_v2") || "null");
+      if (!saved || !Array.isArray(saved) || saved.length === 0) {
+        localStorage.setItem("matcha_users_v2", JSON.stringify(defaultUsers));
+        return defaultUsers;
+      }
+      return saved;
     }
 
-    function handleUserSubmit(e) {
-      e.preventDefault();
-      const name = document.getElementById("fullName").value.trim();
-      const contact = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-      const role = document.getElementById("role").value;
-      const msgBox = document.getElementById("userMsg");
+    function setAuthMode(mode) {
+      authMode = mode;
+      document.getElementById("registerTab").classList.toggle("active", mode === "register");
+      document.getElementById("loginTab").classList.toggle("active", mode === "login");
+      document.getElementById("nameGroup").style.display = mode === "register" ? "block" : "none";
+      document.getElementById("submitBtn").textContent = mode === "register" ? "إنشاء الحساب" : "تسجيل الدخول";
+      document.getElementById("authMsg").className = "msg";
+    }
 
-      if (name.length < 2) {
-        showMessage(msgBox, "يرجى إدخال اسم صحيح.", "error");
-        return;
-      }
+    function showMessage(text, type) {
+      const box = document.getElementById("authMsg");
+      box.textContent = text;
+      box.className = `msg ${type}`;
+    }
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      const fullName = document.getElementById("fullName").value.trim();
+      const contact = document.getElementById("contact").value.trim();
+      const password = document.getElementById("password").value;
+      const users = getUsers();
 
       if (contact.length < 5) {
-        showMessage(msgBox, "يرجى إدخال بريد إلكتروني أو رقم جوال صحيح.", "error");
+        showMessage("يرجى إدخال بريد إلكتروني أو رقم جوال صحيح.", "error");
         return;
       }
 
       if (password.length < 6) {
-        showMessage(msgBox, "كلمة المرور يجب أن تكون 6 أحرف أو أكثر.", "error");
+        showMessage("كلمة المرور يجب أن تكون 6 أحرف أو أكثر.", "error");
         return;
       }
 
-      const savedUsers = JSON.parse(localStorage.getItem("matcha_users") || "[]");
-      savedUsers.push({
-        id: savedUsers.length + 1,
-        name,
-        contact,
-        role,
-        createdAt: new Date().toISOString()
-      });
-      localStorage.setItem("matcha_users", JSON.stringify(savedUsers));
+      if (authMode === "register") {
+        if (fullName.length < 2) {
+          showMessage("يرجى إدخال الاسم الكامل بشكل صحيح.", "error");
+          return;
+        }
 
-      e.target.reset();
-      showMessage(msgBox, "تم حفظ الحساب بنجاح.", "success");
+        const exists = users.some(u => u.contact.toLowerCase() === contact.toLowerCase());
+        if (exists) {
+          showMessage("هذا الحساب مسجل مسبقاً، جرّبي تسجيل الدخول.", "error");
+          return;
+        }
+
+        // الصلاحية الافتراضية لأي حساب جديد هي عميل (customer)
+        const newUser = {
+          id: users.length + 1,
+          fullName,
+          contact,
+          passwordMask: "•".repeat(Math.min(password.length, 10)),
+          role: "customer"
+        };
+
+        users.push(newUser);
+        localStorage.setItem("matcha_users_v2", JSON.stringify(users));
+        localStorage.setItem("matcha_active_user", JSON.stringify(newUser));
+        e.target.reset();
+        renderSession();
+        showMessage("تم إنشاء الحساب بنجاح ومنحكِ صلاحية (عميل).", "success");
+      } else {
+        const found = users.find(u => u.contact.toLowerCase() === contact.toLowerCase());
+        if (!found) {
+          showMessage("لم يتم العثور على حساب بهذا البريد أو الجوال.", "error");
+          return;
+        }
+
+        localStorage.setItem("matcha_active_user", JSON.stringify(found));
+        e.target.reset();
+        renderSession();
+        showMessage("تم تسجيل الدخول بنجاح.", "success");
+      }
     }
 
-    function handleAddressSubmit(e) {
-      e.preventDefault();
-      const city = document.getElementById("city").value.trim();
-      const district = document.getElementById("district").value.trim();
-      const street = document.getElementById("street").value.trim();
-      const msgBox = document.getElementById("addressMsg");
+    function logoutUser() {
+      localStorage.removeItem("matcha_active_user");
+      renderSession();
+    }
 
-      if (!city || !district || !street) {
-        showMessage(msgBox, "يرجى تعبئة جميع حقول العنوان.", "error");
+    function renderSession() {
+      const view = document.getElementById("sessionView");
+      const activeUser = JSON.parse(localStorage.getItem("matcha_active_user") || "null");
+
+      if (!activeUser) {
+        view.innerHTML = `
+          <p style="color:var(--muted);">لا يوجد مستخدم مسجل حالياً. يمكنكِ إنشاء حساب جديد أو تسجيل الدخول بالأعلى.</p>
+        `;
         return;
       }
 
-      const savedAddresses = JSON.parse(localStorage.getItem("matcha_addresses") || "[]");
-      savedAddresses.push({
-        id: savedAddresses.length + 1,
-        city,
-        district,
-        street
-      });
-      localStorage.setItem("matcha_addresses", JSON.stringify(savedAddresses));
+      const roleLabel = activeUser.role === "admin"
+        ? "مشرف / أدمن (صلاحية إدارة النظام)"
+        : "عميل (صلاحية تصفح وطلب المنتجات)";
 
-      e.target.reset();
-      showMessage(msgBox, "تم حفظ عنوان التوصيل بنجاح.", "success");
+      view.innerHTML = `
+        <div><strong>الاسم:</strong> ${activeUser.fullName}</div>
+        <div><strong>وسيلة التواصل:</strong> ${activeUser.contact}</div>
+        <div><strong>كلمة المرور:</strong> ${activeUser.passwordMask || "••••••••"}</div>
+        <div class="role-pill">الصلاحية: ${roleLabel}</div>
+        <button type="button" class="btn-secondary" onclick="logoutUser()">تسجيل الخروج</button>
+      `;
     }
 
     function switchSection(section, btn) {
@@ -470,6 +557,8 @@ CREATE TABLE Addresses (
       document.getElementById("accounts-section").style.display = section === "accounts" ? "flex" : "none";
       document.getElementById("sql-section").style.display = section === "sql" ? "block" : "none";
     }
+
+    renderSession();
   </script>
 </body>
 </html>
