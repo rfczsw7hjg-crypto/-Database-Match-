@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ماتشا بوتيك | النظام الإداري</title>
+  <title>ماتشا بوتيك | المتجر والإدارة</title>
   <style>
     :root {
       --matcha-dark: #2b442e;
@@ -32,6 +32,7 @@
       min-height: 100vh;
     }
 
+    /* الهيدر */
     header {
       background: rgba(255, 255, 255, 0.95);
       border-bottom: 1px solid var(--border);
@@ -49,82 +50,128 @@
       align-items: center;
       gap: 10px;
       font-weight: 700;
-      font-size: 1.25rem;
+      font-size: 1.4rem;
       color: var(--matcha-dark);
     }
 
-    .brand-badge {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: var(--matcha);
-      color: #fff;
-      display: grid;
-      place-items: center;
-    }
-
-    nav {
-      display: flex;
-      gap: 10px;
-    }
-
-    .nav-btn {
-      background: var(--mask);
+    .menu-btn {
+      background: none;
       border: 1px solid var(--border);
-      color: var(--matcha-dark);
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
+      color: var(--matcha-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* القائمة الجانبية */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: -280px;
+      width: 280px;
+      height: 100%;
+      background: #fff;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+      transition: 0.3s ease;
+      z-index: 1000;
+      padding: 2rem;
+    }
+
+    .sidebar.active {
+      right: 0;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .nav-links {
+      list-style: none;
+    }
+
+    .nav-links li {
+      margin-bottom: 1rem;
+    }
+
+    .nav-links a, .nav-links button {
+      color: var(--ink);
       text-decoration: none;
-      font-size: 0.9rem;
-      transition: 0.2s;
+      font-size: 1.1rem;
+      font-weight: 500;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      text-align: right;
+      padding: 8px 0;
+      display: block;
     }
 
-    .nav-btn.admin-link {
-      background-color: var(--matcha-dark);
-      color: #fff;
-      border-color: var(--matcha-dark);
+    .nav-links a:hover, .nav-links button:hover {
+      color: var(--matcha);
     }
 
-    .nav-btn:hover {
-      background: var(--matcha);
-      color: #fff;
+    .admin-link {
+      color: var(--danger) !important;
+      font-weight: bold !important;
+      border-top: 1px solid var(--border);
+      margin-top: 1rem;
+      padding-top: 1rem !important;
     }
 
+    /* المحتوى */
     .container {
-      max-width: 800px;
+      max-width: 1200px;
       margin: 2rem auto;
       padding: 0 1rem;
     }
 
-    .customer-store {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 3rem 2rem;
-      text-align: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    .store-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 2rem;
     }
 
-    .customer-store h1 {
-      color: var(--matcha-dark);
+    .product-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .product-img {
+      height: 180px;
+      background: var(--mask);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
       margin-bottom: 1rem;
     }
 
+    /* بوابة الإدارة */
     .admin-portal {
       display: none;
       background: #1a211b;
       color: #dceadc;
       border-radius: 16px;
       padding: 2rem;
-      margin-top: 2rem;
-    }
-
-    .admin-header {
-      border-bottom: 1px solid #2d3a2f;
-      padding-bottom: 1rem;
-      margin-bottom: 1.5rem;
     }
 
     .user-card {
@@ -144,63 +191,59 @@
       border-radius: 20px;
       font-size: 0.8rem;
     }
-
-    .sql-code {
-      background: #111;
-      color: #00ff66;
-      padding: 1rem;
-      border-radius: 8px;
-      font-family: monospace;
-      margin-top: 15px;
-      overflow-x: auto;
-    }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="brand">
-      <div class="brand-badge">🍵</div>
-      <span>ماتشا بوتيك</span>
-    </div>
-    <nav>
-      <button class="nav-btn" onclick="toggleView('store')">واجهة المتجر</button>
-      <button class="nav-btn admin-link" onclick="toggleView('admin')">بوابة الإدارة (الأدمن)</button>
-    </nav>
+    <div class="brand">🍵 ماتشا بوتيك</div>
+    <button class="menu-btn" onclick="toggleSidebar()">
+      <span>☰</span> القائمة
+    </button>
   </header>
 
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>القائمة</h2>
+      <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#" onclick="showSection('store')">الرئيسية</a></li>
+      <li><a href="#" onclick="showSection('store')">منتجات مخفضة</a></li>
+      <li><a href="#" onclick="showSection('store')">أنواع الماتشا</a></li>
+      <li><a href="#" onclick="showSection('store')">الأكثر مبيعاً</a></li>
+      <li><button onclick="alert('صفحة تسجيل الدخول')">تسجيل الدخول / إنشاء حساب</button></li>
+      <li><a href="#" class="admin-link" onclick="showSection('admin')">🔒 بوابة الإدارة (الأدمن)</a></li>
+    </ul>
+  </div>
+
   <div class="container">
-    <section id="storeView" class="customer-store">
-      <h1>🍃 أهلاً بكم في متجر الماتشا</h1>
-      <p>تصفحوا منتجاتنا الفاخرة واطلبوا بكل سهولة ويسر.</p>
-      <div style="margin-top:2rem; padding:2rem; background:var(--mask); border-radius:12px;">
-        <h3>[مكان عرض المنتجات للعملاء]</h3>
+    <section id="storeSection">
+      <h2>المنتجات المميزة</h2>
+      <br>
+      <div class="store-grid">
+        <div class="product-card">
+          <div class="product-img">🍵</div>
+          <h3>ماتشا احتفالية</h3>
+          <p>115 ر.س</p>
+        </div>
+        <div class="product-card">
+          <div class="product-img">🧋</div>
+          <h3>آيس ماتشا لاتيه</h3>
+          <p>24 ر.س</p>
+        </div>
+        <div class="product-card">
+          <div class="product-img">🍪</div>
+          <h3>كوكيز الماتشا</h3>
+          <p>16 ر.س</p>
+        </div>
       </div>
     </section>
 
-    <section id="adminView" class="admin-portal">
-      <div class="admin-header">
-        <h2>🔒 لوحة تحكم النظام (خاص بالمشرفين)</h2>
-        <p>إدارة حسابات المستخدمين وصلاحيات الوصول</p>
-      </div>
-
-      <div id="usersManager">
-        <h3>المستخدمون المسجلون</h3>
-        <div id="usersList" style="margin-top:1rem;"></div>
-      </div>
-
-      <div style="margin-top:2rem;">
-        <h3>هيكل قاعدة البيانات (SQL)</h3>
-        <div class="sql-code">
-          CREATE TABLE Users (<br>
-          &nbsp;&nbsp;user_id INT PRIMARY KEY AUTO_INCREMENT,<br>
-          &nbsp;&nbsp;full_name VARCHAR(120) NOT NULL,<br>
-          &nbsp;&nbsp;contact_info VARCHAR(150) NOT NULL UNIQUE,<br>
-          &nbsp;&nbsp;password_hash VARCHAR(255) NOT NULL,<br>
-          &nbsp;&nbsp;role ENUM('customer', 'admin') DEFAULT 'customer'<br>
-          );
-        </div>
-      </div>
+    <section id="adminSection" class="admin-portal">
+      <h2>لوحة تحكم النظام (الأدمن)</h2>
+      <p>إدارة المستخدمين والصلاحيات</p>
+      <div id="usersList" style="margin-top:1rem;"></div>
     </section>
   </div>
 
@@ -211,10 +254,17 @@
       { id: 3, name: "مي بالحارث", contact: "may@matcha.sa", role: "customer" }
     ];
 
-    function toggleView(view) {
-      const store = document.getElementById("storeView");
-      const admin = document.getElementById("adminView");
-      if (view === 'store') {
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      sidebar.classList.toggle("active");
+    }
+
+    function showSection(section) {
+      toggleSidebar();
+      const store = document.getElementById("storeSection");
+      const admin = document.getElementById("adminSection");
+      
+      if (section === 'store') {
         store.style.display = 'block';
         admin.style.display = 'none';
       } else {
