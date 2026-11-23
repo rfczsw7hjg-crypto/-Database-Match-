@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ماتشا بوتيك | إدارة الحسابات والمستخدمين</title>
+  <title>ماتشا بوتيك | النظام الإداري</title>
   <style>
     :root {
       --matcha-dark: #2b442e;
       --matcha: #4b744e;
       --matcha-soft: #d9e7d6;
-      --matcha-mist: #f3f8f2;
+      --mask: #f4f8f3;
       --cream: #fbfaf6;
       --ink: #212a22;
       --muted: #647366;
@@ -26,28 +26,22 @@
     }
 
     body {
-      background:
-        radial-gradient(circle at 12% 10%, rgba(163, 196, 158, 0.25), transparent 36%),
-        radial-gradient(circle at 88% 18%, rgba(75, 116, 78, 0.14), transparent 42%),
-        var(--cream);
+      background-color: var(--cream);
       color: var(--ink);
       line-height: 1.65;
       min-height: 100vh;
     }
 
     header {
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.95);
       border-bottom: 1px solid var(--border);
       padding: 1rem 5%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 100;
     }
 
     .brand {
@@ -60,280 +54,105 @@
     }
 
     .brand-badge {
-      width: 40px;
-      height: 40px;
-      border-radius: 14px 4px 14px 14px;
-      background: linear-gradient(135deg, var(--matcha), var(--matcha-dark));
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--matcha);
       color: #fff;
       display: grid;
       place-items: center;
-      font-size: 1.2rem;
-      box-shadow: 0 6px 14px rgba(43, 68, 46, 0.18);
     }
 
     nav {
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    nav button {
-      background: var(--matcha-mist);
-      border: 1px solid var(--border);
-      color: var(--matcha-dark);
-      padding: 7px 15px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
-      transition: 0.2s ease;
-    }
-
-    nav button.active,
-    nav button:hover {
-      background: var(--matcha);
-      color: #fff;
-      border-color: var(--matcha);
-    }
-
-    .hero {
-      max-width: 760px;
-      margin: 1.8rem auto 0;
-      padding: 1.6rem 1.8rem;
-      border-radius: 24px 8px 24px 24px;
-      background: linear-gradient(135deg, #e7f0e5 0%, #f6faf5 62%, #dfece0 100%);
-      border: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::after {
-      content: "🍵";
-      position: absolute;
-      left: 18px;
-      bottom: -10px;
-      font-size: 4.4rem;
-      opacity: 0.14;
-      transform: rotate(-12deg);
-      pointer-events: none;
-    }
-
-    .hero-tag {
-      display: inline-block;
-      background: #fff;
-      color: var(--matcha);
-      border: 1px solid var(--border);
-      padding: 3px 12px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .hero h1 {
-      font-size: 1.5rem;
-      color: var(--matcha-dark);
-      margin-bottom: 6px;
-    }
-
-    .hero p {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .stack-container {
-      max-width: 760px;
-      margin: 1.5rem auto 3rem;
-      padding: 0 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 1.6rem;
-      box-shadow: 0 10px 26px rgba(43, 68, 46, 0.05);
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 1.2rem;
-      padding-bottom: 0.85rem;
-      border-bottom: 1px dashed var(--border);
-    }
-
-    .card-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: var(--matcha-mist);
-      border: 1px solid var(--matcha-soft);
-      display: grid;
-      place-items: center;
-      font-size: 1.25rem;
-      flex-shrink: 0;
-    }
-
-    .card-header h2 {
-      font-size: 1.2rem;
-      color: var(--matcha-dark);
-    }
-
-    .card-header span {
-      display: block;
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-
-    .mode-switch {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-bottom: 1.2rem;
-      background: var(--matcha-mist);
-      padding: 5px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
     }
 
-    .mode-btn {
-      border: none;
-      background: transparent;
+    .nav-btn {
+      background: var(--mask);
+      border: 1px solid var(--border);
       color: var(--matcha-dark);
-      padding: 9px;
-      border-radius: 10px;
-      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 0.92rem;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.9rem;
       transition: 0.2s;
     }
 
-    .mode-btn.active {
-      background: #fff;
-      color: var(--matcha-dark);
-      box-shadow: 0 3px 10px rgba(43, 68, 46, 0.08);
+    .nav-btn.admin-link {
+      background-color: var(--matcha-dark);
+      color: #fff;
+      border-color: var(--matcha-dark);
     }
 
-    .form-group {
+    .nav-btn:hover {
+      background: var(--matcha);
+      color: #fff;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .customer-store {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+
+    .customer-store h1 {
+      color: var(--matcha-dark);
       margin-bottom: 1rem;
     }
 
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    input {
-      width: 100%;
-      padding: 11px 14px;
-      border: 1px solid #d3dfd1;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      background: var(--matcha-mist);
-      color: var(--ink);
-      transition: 0.2s;
-    }
-
-    input:focus {
-      outline: none;
-      background: #fff;
-      border-color: var(--matcha);
-      box-shadow: 0 0 0 3px rgba(75, 116, 78, 0.14);
-    }
-
-    .btn {
-      width: 100%;
-      background: linear-gradient(135deg, var(--matcha), var(--matcha-dark));
-      color: #fff;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 0.98rem;
-      font-weight: 600;
-      transition: transform 0.15s ease, box-shadow 0.2s ease;
-      box-shadow: 0 6px 16px rgba(43, 68, 46, 0.16);
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 20px rgba(43, 68, 46, 0.22);
-    }
-
-    .btn-secondary {
-      margin-top: 10px;
-      width: 100%;
-      background: var(--matcha-mist);
-      color: var(--matcha-dark);
-      border: 1px solid var(--border);
-      padding: 10px 16px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .msg {
-      margin-top: 12px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      display: none;
-    }
-
-    .msg.error {
-      display: block;
-      background: #fdecec;
-      color: var(--danger);
-      border: 1px solid #f5c2c2;
-    }
-
-    .msg.success {
-      display: block;
-      background: #eaf6ee;
-      color: var(--success);
-      border: 1px solid #b7e1c4;
-    }
-
-    .session-box {
-      background: var(--matcha-mist);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.1rem 1.2rem;
-    }
-
-    .role-pill {
-      display: inline-block;
-      background: #fff;
-      color: var(--matcha-dark);
-      border: 1px solid var(--matcha-soft);
-      padding: 3px 12px;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      margin-top: 6px;
-    }
-
-    .sql-box {
+    .admin-portal {
       display: none;
       background: #1a211b;
       color: #dceadc;
-      padding: 1.5rem;
-      border-radius: 18px;
-      direction: ltr;
-      text-align: left;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+
+    .admin-header {
+      border-bottom: 1px solid #2d3a2f;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .user-card {
+      background: #253127;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .role-badge {
+      background: var(--matcha);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+
+    .sql-code {
+      background: #111;
+      color: #00ff66;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      margin-top: 15px;
       overflow-x: auto;
-      font-family: Consolas, monospace;
-      font-size: 0.88rem;
-      border: 1px solid #2d3a2f;
     }
   </style>
 </head>
@@ -341,224 +160,84 @@
 
   <header>
     <div class="brand">
-      <div class="brand-badge">🍃</div>
+      <div class="brand-badge">🍵</div>
       <span>ماتشا بوتيك</span>
     </div>
     <nav>
-      <button class="active" onclick="switchSection('accounts', this)">الحساب والمستخدمون</button>
-      <button onclick="switchSection('sql', this)">مرجع SQL</button>
+      <button class="nav-btn" onclick="toggleView('store')">واجهة المتجر</button>
+      <button class="nav-btn admin-link" onclick="toggleView('admin')">بوابة الإدارة (الأدمن)</button>
     </nav>
   </header>
 
-  <section class="hero">
-    <span class="hero-tag">🔐 نظام إدارة الحسابات والمستخدمين</span>
-    <h1>أهلاً بكِ في متجر الماتشا</h1>
-    <p>أنشئي حساباً جديداً أو سجّلي الدخول لإدارة حسابكِ والتحقق من الصلاحيات بأمان.</p>
-  </section>
+  <div class="container">
+    <section id="storeView" class="customer-store">
+      <h1>🍃 أهلاً بكم في متجر الماتشا</h1>
+      <p>تصفحوا منتجاتنا الفاخرة واطلبوا بكل سهولة ويسر.</p>
+      <div style="margin-top:2rem; padding:2rem; background:var(--mask); border-radius:12px;">
+        <h3>[مكان عرض المنتجات للعملاء]</h3>
+      </div>
+    </section>
 
-  <main class="stack-container">
-    <div id="accounts-section" style="display:flex; flex-direction:column; gap:1.5rem;">
+    <section id="adminView" class="admin-portal">
+      <div class="admin-header">
+        <h2>🔒 لوحة تحكم النظام (خاص بالمشرفين)</h2>
+        <p>إدارة حسابات المستخدمين وصلاحيات الوصول</p>
+      </div>
 
-      <!-- البطاقة الأولى: إنشاء حساب / تسجيل دخول -->
-      <section class="card">
-        <div class="card-header">
-          <div class="card-icon">👤</div>
-          <div>
-            <h2>إنشاء حساب / تسجيل الدخول</h2>
-            <span>الحسابات الجديدة تُسجّل بصلاحية (عميل) تلقائياً لحماية النظام</span>
-          </div>
+      <div id="usersManager">
+        <h3>المستخدمون المسجلون</h3>
+        <div id="usersList" style="margin-top:1rem;"></div>
+      </div>
+
+      <div style="margin-top:2rem;">
+        <h3>هيكل قاعدة البيانات (SQL)</h3>
+        <div class="sql-code">
+          CREATE TABLE Users (<br>
+          &nbsp;&nbsp;user_id INT PRIMARY KEY AUTO_INCREMENT,<br>
+          &nbsp;&nbsp;full_name VARCHAR(120) NOT NULL,<br>
+          &nbsp;&nbsp;contact_info VARCHAR(150) NOT NULL UNIQUE,<br>
+          &nbsp;&nbsp;password_hash VARCHAR(255) NOT NULL,<br>
+          &nbsp;&nbsp;role ENUM('customer', 'admin') DEFAULT 'customer'<br>
+          );
         </div>
-
-        <div class="mode-switch">
-          <button type="button" id="registerTab" class="mode-btn active" onclick="setAuthMode('register')">إنشاء حساب جديد</button>
-          <button type="button" id="loginTab" class="mode-btn" onclick="setAuthMode('login')">تسجيل الدخول</button>
-        </div>
-
-        <form id="authForm" onsubmit="handleAuthSubmit(event)">
-          <div class="form-group" id="nameGroup">
-            <label for="fullName">الاسم الكامل</label>
-            <input type="text" id="fullName" placeholder="اكتبي اسمكِ الكامل" />
-          </div>
-
-          <div class="form-group">
-            <label for="contact">البريد الإلكتروني أو رقم الجوال</label>
-            <input type="text" id="contact" placeholder="example@mail.com أو 05xxxxxxxx" required />
-          </div>
-
-          <div class="form-group">
-            <label for="password">كلمة المرور (6 أحرف فأكثر)</label>
-            <input type="password" id="password" placeholder="••••••••" required />
-          </div>
-
-          <button type="submit" id="submitBtn" class="btn">إنشاء الحساب</button>
-          <div id="authMsg" class="msg"></div>
-        </form>
-      </section>
-
-      <!-- البطاقة الثانية: حالة الحساب والصلاحيات -->
-      <section class="card">
-        <div class="card-header">
-          <div class="card-icon">🛡️</div>
-          <div>
-            <h2>حالة الحساب والصلاحيات</h2>
-            <span>التحقق من هوية المستخدم ونوع الصلاحية (عميل أو مشرف)</span>
-          </div>
-        </div>
-
-        <div id="sessionView" class="session-box"></div>
-      </section>
-
-    </div>
-
-    <!-- مرجع SQL الخاص بجدول Users -->
-    <div id="sql-section" class="sql-box">
-<pre>
-CREATE TABLE Users (
-    user_id INT PRIMARY KEY AUTO_INCREMENT,
-    full_name VARCHAR(120) NOT NULL,
-    contact_info VARCHAR(150) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    role ENUM('customer', 'admin') NOT NULL DEFAULT 'customer',
-    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-</pre>
-    </div>
-  </main>
+      </div>
+    </section>
+  </div>
 
   <script>
-    let authMode = "register";
-
-    // حساب مشرف افتراضي للتجربة فقط (بدون إمكانية اختيار الأدمن من نموذج التسجيل العادي)
-    const defaultUsers = [
-      {
-        id: 1,
-        fullName: "مشرفة النظام",
-        contact: "admin@matcha.sa",
-        passwordMask: "••••••••",
-        role: "admin"
-      }
+    const mockUsers = [
+      { id: 1, name: "فاطمه هلال", contact: "fatmah@matcha.sa", role: "admin" },
+      { id: 2, name: "عائشه الدوسري", contact: "aisha@matcha.sa", role: "customer" },
+      { id: 3, name: "مي بالحارث", contact: "may@matcha.sa", role: "customer" }
     ];
 
-    function getUsers() {
-      const saved = JSON.parse(localStorage.getItem("matcha_users_v2") || "null");
-      if (!saved || !Array.isArray(saved) || saved.length === 0) {
-        localStorage.setItem("matcha_users_v2", JSON.stringify(defaultUsers));
-        return defaultUsers;
-      }
-      return saved;
-    }
-
-    function setAuthMode(mode) {
-      authMode = mode;
-      document.getElementById("registerTab").classList.toggle("active", mode === "register");
-      document.getElementById("loginTab").classList.toggle("active", mode === "login");
-      document.getElementById("nameGroup").style.display = mode === "register" ? "block" : "none";
-      document.getElementById("submitBtn").textContent = mode === "register" ? "إنشاء الحساب" : "تسجيل الدخول";
-      document.getElementById("authMsg").className = "msg";
-    }
-
-    function showMessage(text, type) {
-      const box = document.getElementById("authMsg");
-      box.textContent = text;
-      box.className = `msg ${type}`;
-    }
-
-    function handleAuthSubmit(e) {
-      e.preventDefault();
-      const fullName = document.getElementById("fullName").value.trim();
-      const contact = document.getElementById("contact").value.trim();
-      const password = document.getElementById("password").value;
-      const users = getUsers();
-
-      if (contact.length < 5) {
-        showMessage("يرجى إدخال بريد إلكتروني أو رقم جوال صحيح.", "error");
-        return;
-      }
-
-      if (password.length < 6) {
-        showMessage("كلمة المرور يجب أن تكون 6 أحرف أو أكثر.", "error");
-        return;
-      }
-
-      if (authMode === "register") {
-        if (fullName.length < 2) {
-          showMessage("يرجى إدخال الاسم الكامل بشكل صحيح.", "error");
-          return;
-        }
-
-        const exists = users.some(u => u.contact.toLowerCase() === contact.toLowerCase());
-        if (exists) {
-          showMessage("هذا الحساب مسجل مسبقاً، جرّبي تسجيل الدخول.", "error");
-          return;
-        }
-
-        // الصلاحية الافتراضية لأي حساب جديد هي عميل (customer)
-        const newUser = {
-          id: users.length + 1,
-          fullName,
-          contact,
-          passwordMask: "•".repeat(Math.min(password.length, 10)),
-          role: "customer"
-        };
-
-        users.push(newUser);
-        localStorage.setItem("matcha_users_v2", JSON.stringify(users));
-        localStorage.setItem("matcha_active_user", JSON.stringify(newUser));
-        e.target.reset();
-        renderSession();
-        showMessage("تم إنشاء الحساب بنجاح ومنحكِ صلاحية (عميل).", "success");
+    function toggleView(view) {
+      const store = document.getElementById("storeView");
+      const admin = document.getElementById("adminView");
+      if (view === 'store') {
+        store.style.display = 'block';
+        admin.style.display = 'none';
       } else {
-        const found = users.find(u => u.contact.toLowerCase() === contact.toLowerCase());
-        if (!found) {
-          showMessage("لم يتم العثور على حساب بهذا البريد أو الجوال.", "error");
-          return;
-        }
-
-        localStorage.setItem("matcha_active_user", JSON.stringify(found));
-        e.target.reset();
-        renderSession();
-        showMessage("تم تسجيل الدخول بنجاح.", "success");
+        store.style.display = 'none';
+        admin.style.display = 'block';
+        renderUsers();
       }
     }
 
-    function logoutUser() {
-      localStorage.removeItem("matcha_active_user");
-      renderSession();
+    function renderUsers() {
+      const container = document.getElementById("usersList");
+      container.innerHTML = mockUsers.map(u => `
+        <div class="user-card">
+          <div>
+            <strong>${u.name}</strong><br>
+            <small>${u.contact}</small>
+          </div>
+          <div>
+            <span class="role-badge">${u.role === 'admin' ? 'مشرف (Admin)' : 'عميل (Customer)'}</span>
+          </div>
+        </div>
+      `).join("");
     }
-
-    function renderSession() {
-      const view = document.getElementById("sessionView");
-      const activeUser = JSON.parse(localStorage.getItem("matcha_active_user") || "null");
-
-      if (!activeUser) {
-        view.innerHTML = `
-          <p style="color:var(--muted);">لا يوجد مستخدم مسجل حالياً. يمكنكِ إنشاء حساب جديد أو تسجيل الدخول بالأعلى.</p>
-        `;
-        return;
-      }
-
-      const roleLabel = activeUser.role === "admin"
-        ? "مشرف / أدمن (صلاحية إدارة النظام)"
-        : "عميل (صلاحية تصفح وطلب المنتجات)";
-
-      view.innerHTML = `
-        <div><strong>الاسم:</strong> ${activeUser.fullName}</div>
-        <div><strong>وسيلة التواصل:</strong> ${activeUser.contact}</div>
-        <div><strong>كلمة المرور:</strong> ${activeUser.passwordMask || "••••••••"}</div>
-        <div class="role-pill">الصلاحية: ${roleLabel}</div>
-        <button type="button" class="btn-secondary" onclick="logoutUser()">تسجيل الخروج</button>
-      `;
-    }
-
-    function switchSection(section, btn) {
-      document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      document.getElementById("accounts-section").style.display = section === "accounts" ? "flex" : "none";
-      document.getElementById("sql-section").style.display = section === "sql" ? "block" : "none";
-    }
-
-    renderSession();
   </script>
 </body>
 </html>
