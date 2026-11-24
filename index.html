@@ -1,1 +1,198 @@
+const express = require('express');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const sqlite3 = require('sqlite3').verbose();
 
+const app = express();
+const db = new sqlite3.Database('./database.sqlite');
+const SECRET_KEY = 'fatima_secret_key_2026';
+
+app.use(express.json());
+
+// 1. إنشاء الجداول
+db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS Users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        contact TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        role TEXT DEFAULT 'customer'
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS Addresses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        city TEXT NOT NULL,
+        district TEXT NOT NULL,
+        street TEXT NOT NULL,
+        location_url TEXT,
+        FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+    )`);
+});
+
+// 2. التحقق من المدخلات والصلاحيات
+function validateInput(contact, password) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^(05|5)(5|0|3|6|4|9|1|8|7)([0-9]{7})$/;
+    if (!emailRegex.test(contact) && !phoneRegex.test(contact)) {
+        return 'أدخل بريداً إلكترونياً صحيحاً أو رقم جوال سعودي (05xxxxxxxx)';
+    }
+    if (!password || password.length < 6) {
+        return 'كلمة المرور يجب أن تكون 6 خانات فأكثر';
+    }
+    return null;
+}
+
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'يجب تسجيل الدخول أولاً' });
+
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+        if (err) return res.status(403).json({ error: 'الجلسة غير صالحة' });
+        req.user = user;
+        next();
+    });
+}
+
+function isAdmin(req, res, next) {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ error: 'ممنوع: هذه الصلاحية للمشرف (Admin) فقط' });
+    }
+    next();
+}
+
+// 3. مسارات الـ API
+app.post('/api/register', async (req, res) => {
+    const { name, contact, password, role } = req.body;
+    if (!name) return res.status(400).json({ error: 'الاسم مطلوب' });
+
+    const errorMsg = validateInput(contact, password);
+    if (errorMsg) return res.status(400).json({ error: errorMsg });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const userRole = role === 'admin' ? 'admin' : 'customer';
+
+    db.run(`INSERT INTO Users (name, contact, password, role) VALUES (?, ?, ?, ?)`,
+        [name, contact, hashedPassword, userRole],
+        function (err) {
+            if (err) return res.status(400).json({ error: 'الإيميل أو الجوال مسجل مسبقاً' });
+            res.json({ message: 'تم إنشاء الحساب بنجاح!' });
+        }
+    );
+});
+
+app.post('/api/login', (req, res) => {
+    const { contact, password } = req.body;
+    db.get(`SELECT * FROM Users WHERE contact = ?`, [contact], async (err, user) => {
+        if (err || !user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(400).json({ error: 'بيانات الدخول غير صحيحة' });
+        }
+        const token = jwt.sign({ id: user.id, name: user.name, role: user.role }, SECRET_KEY, { expiresIn: '2h' });
+        res.json({ token });
+    });
+});
+
+app.get('/api/profile', authenticateToken, (req, res) => {
+    db.get(`SELECT id, name, contact, role FROM Users WHERE id = ?`, [req.user.id], (err, user) => {
+        if (err || !user) return res.status(404).json({ error: 'المستخدم غير موجود' });
+        db.all(`SELECT * FROM Addresses WHERE user_id = ?`, [req.user.id], (err, addresses) => {
+            res.json({ user, addresses: addresses || [] });
+        });
+    });
+});
+
+app.post('/api/addresses', authenticateToken, (req, res) => {
+    const { city, district, street, location_url } = req.body;
+    if (!city || !district || !street) return res.status(400).json({ error: 'المدينة والحي والشارع مطلوبة' });
+
+    db.run(`INSERT INTO Addresses (user_id, city, district, street, location_url) VALUES (?, ?, ?, ?, ?)`,
+        [req.user.id, city, district, street, location_url || ''],
+        (err) => {
+            if (err) return res.status(500).json({ error: 'خطأ في الحفظ' });
+            res.json({ message: 'تمت إضافة العنوان' });
+        }
+    );
+});
+
+app.get('/api/admin/users', authenticateToken, isAdmin, (req, res) => {
+    db.all(`SELECT id, name, contact, role FROM Users`, [], (err, users) => res.json({ users: users || [] }));
+});
+
+// 4. صفحة الواجهة (HTML)
+const htmlPage = [
+    '<!DOCTYPE html>',
+    '<html lang="ar" dir="rtl">',
+    '<head><meta charset="UTF-8"><title>إدارة الحسابات والعملاء</title>',
+    '<style>',
+    'body { font-family: Tahoma, sans-serif; background: #f0f2f5; padding: 30px; max-width: 650px; margin: auto; }',
+    '.card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }',
+    'input, select, button { width: 100%; padding: 10px; margin: 6px 0; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc; }',
+    'button { background: #007bff; color: white; border: none; cursor: pointer; font-weight: bold; }',
+    'button:hover { background: #0056b3; }',
+    '.btn-green { background: #28a745; }',
+    '.btn-red { background: #dc3545; width: auto; float: left; padding: 6px 12px; }',
+    '.link { color: #007bff; text-align: center; cursor: pointer; margin-top: 10px; font-size: 14px; }',
+    '.badge { background: #17a2b8; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; }',
+    'table { width: 100%; border-collapse: collapse; margin-top: 10px; }',
+    'th, td { border: 1px solid #ddd; padding: 8px; text-align: right; }',
+    '</style></head><body>',
+    '<div id="auth-view" class="card">',
+    '<h2 id="title">تسجيل الدخول</h2>',
+    '<p id="err" style="color:red; font-size:13px;"></p>',
+    '<input type="text" id="name" placeholder="الاسم الكامل" style="display:none;">',
+    '<input type="text" id="contact" placeholder="البريد الإلكتروني أو الجوال (05...)">',
+    '<input type="password" id="password" placeholder="كلمة المرور (6 خانات فأكثر)">',
+    '<select id="role" style="display:none;"><option value="customer">عميل (Customer)</option><option value="admin">مشرف / أدمن (Admin)</option></select>',
+    '<button onclick="handleAuth()" id="auth-btn">دخول</button>',
+    '<div class="link" onclick="toggleAuth()" id="toggle-link">إنشاء حساب جديد</div>',
+    '</div>',
+    '<div id="profile-view" style="display:none;">',
+    '<div class="card"><button class="btn-red" onclick="logout()">خروج</button><h2>الملف الشخصي</h2>',
+    '<p><strong>الاسم:</strong> <span id="p-name"></span></p>',
+    '<p><strong>التواصل:</strong> <span id="p-contact"></span></p>',
+    '<p><strong>الصلاحية:</strong> <span id="p-role" class="badge"></span></p></div>',
+    '<div class="card"><h3>إدارة عناوين التوصيل</h3>',
+    '<input type="text" id="city" placeholder="المدينة (مثلاً: الدمام)">',
+    '<input type="text" id="district" placeholder="الحي">',
+    '<input type="text" id="street" placeholder="الشارع">',
+    '<input type="text" id="loc" placeholder="رابط الموقع (اختياري)">',
+    '<button class="btn-green" onclick="addAddress()">+ إضافة عنوان جديد</button>',
+    '<ul id="addr-list"></ul></div>',
+    '<div id="admin-box" class="card" style="display:none; border-top: 4px solid #dc3545;">',
+    '<h3>لوحة الإدارة (للمشرفين فقط)</h3>',
+    '<table><thead><tr><th>#</th><th>الاسم</th><th>التواصل</th><th>الصلاحية</th></tr></thead><tbody id="users-tbody"></tbody></table>',
+    '</div></div>',
+    '<script>',
+    'let isReg = false;',
+    'function toggleAuth() {',
+    '  isReg = !isReg;',
+    '  document.getElementById("title").innerText = isReg ? "إنشاء حساب جديد" : "تسجيل الدخول";',
+    '  document.getElementById("auth-btn").innerText = isReg ? "تسجيل" : "دخول";',
+    '  document.getElementById("toggle-link").innerText = isReg ? "لديك حساب؟ سجل دخولك" : "إنشاء حساب جديد";',
+    '  document.getElementById("name").style.display = isReg ? "block" : "none";',
+    '  document.getElementById("role").style.display = isReg ? "block" : "none";',
+    '  document.getElementById("err").innerText = "";',
+    '}',
+    'async function handleAuth() {',
+    '  const url = isReg ? "/api/register" : "/api/login";',
+    '  const body = { name: document.getElementById("name").value, contact: document.getElementById("contact").value, password: document.getElementById("password").value, role: document.getElementById("role").value };',
+    '  const res = await fetch(url, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body) });',
+    '  const data = await res.json();',
+    '  if (!res.ok) return document.getElementById("err").innerText = data.error;',
+    '  if (isReg) { alert(data.message); toggleAuth(); } else { localStorage.setItem("token", data.token); loadProfile(); }',
+    '}',
+    'async function loadProfile() {',
+    '  const token = localStorage.getItem("token");',
+    '  if (!token) return;',
+    '  const res = await fetch("/api/profile", { headers: { "Authorization": "Bearer " + token } });',
+    '  if (!res.ok) return logout();',
+    '  const { user, addresses } = await res.json();',
+    '  document.getElementById("auth-view").style.display = "none";',
+    '  document.getElementById("profile-view").style.display = "block";',
+    '  document.getElementById("p-name").innerText = user.name;',
+    '  document.getElementById("p-contact").innerText = user.contact;',
+    '  document.getElementById("p-role").innerText = user.role === "admin" ? "مشرف (Admin)" : "عميل";',
+    '  document.getElementById("addr-list").innerHTML = addresses.map(a => "<li>" + a.city + " - حي " + a.district + " - شارع " + a.street + (a.location_url ? " (<a href=\'" + a.location_url + "\' target=\'_blank\'>الموقع</a>)" : "") + "</li>").join("");',
+    '  if (user.role === "admin") {',
+    '    document.getElementById("admin-box").style.display = "block";',
