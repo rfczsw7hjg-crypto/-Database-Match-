@@ -496,7 +496,7 @@ hr {
 <!-- 5) قسم لوحة تحكم المشرف: إدارة المنتجات والأسعار + الحسابات المسجلة -->
 <section id="adminPanel" class="hidden">
     <h1>لوحة تحكم المشرف — ماتشلي 🛡️</h1>
-    <p class="subtitle">إدارة المنتجات والأسعار والإضافات والحسابات المسجلة</p>
+    <p class="subtitle">إدارة المنتجات والأسعار والإضافات والحسابات المسجلة (محفوظة تلقائياً)</p>
 
     <!-- نموذج إضافة منتج جديد -->
     <h3>إضافة منتج جديد</h3>
@@ -573,6 +573,7 @@ hr {
     <div id="adminUsersList"></div>
 
     <hr>
+    <button type="button" class="secondary" onclick="resetStoreData()">استعادة المنتجات والبيانات الافتراضية</button>
     <button type="button" class="danger" onclick="logout()">تسجيل الخروج من لوحة المشرف</button>
 </section>
 
@@ -580,6 +581,12 @@ hr {
 </div>
 
 <script>
+const STORAGE_KEYS = {
+    PRODUCTS: "matchli_products_v1",
+    USERS: "matchli_users_v1",
+    CURRENT_USER: "matchli_current_user_v1"
+};
+
 // أقسام القائمة الجانبية
 let categories = [
     { id: "drinks", name: "مشروبات ماتشلي" },
@@ -601,8 +608,8 @@ let selectedCategoryId = "all";
 let selectedSortId = "recommended";
 let selectedProductId = null;
 
-// جدول المنتجات (Products)
-let products = [
+// المنتجات الافتراضية
+const defaultProducts = [
     {
         id: 1,
         name: "آيس ماتشا لاتيه",
@@ -691,7 +698,7 @@ let products = [
 ];
 
 // حساب المشرف الافتراضي
-let users = [
+const defaultUsers = [
     {
         name: "المشرف العام",
         email: "admin@matcha.sa",
@@ -702,7 +709,60 @@ let users = [
     }
 ];
 
-let currentUser = null;
+function loadFromStorage(key, fallback) {
+    try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return JSON.parse(JSON.stringify(fallback));
+        const parsed = JSON.parse(raw);
+        return parsed ?? JSON.parse(JSON.stringify(fallback));
+    } catch (err) {
+        return JSON.parse(JSON.stringify(fallback));
+    }
+}
+
+function saveState() {
+    try {
+        localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products));
+        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+        if (currentUser) {
+            localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(currentUser.email));
+        } else {
+            localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+        }
+    } catch (err) {
+        // في حال كانت صورة مرفوعة كبيرة جداً وتجاوزت حد التخزين المحلي
+        try {
+            const lightweightProducts = products.map(p =>
+                p.image && p.image.startsWith("data:") ? { ...p, image: "" } : p
+            );
+            localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(lightweightProducts));
+            localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+        } catch (_) {}
+    }
+}
+
+let products = loadFromStorage(STORAGE_KEYS.PRODUCTS, defaultProducts);
+let users = loadFromStorage(STORAGE_KEYS.USERS, defaultUsers);
+if (!users.some(u => u.email === "admin@matcha.sa")) {
+    users.unshift(JSON.parse(JSON.stringify(defaultUsers[0])));
+}
+
+const savedEmail = loadFromStorage(STORAGE_KEYS.CURRENT_USER, null);
+let currentUser = savedEmail ? users.find(u => u.email === savedEmail) || null : null;
+
+function resetStoreData() {
+    if (!confirm("هل تريدين استعادة المنتجات والحسابات الافتراضية؟ سيتم حذف المنتجات المضافة يدوياً.")) {
+        return;
+    }
+    products = JSON.parse(JSON.stringify(defaultProducts));
+    users = JSON.parse(JSON.stringify(defaultUsers));
+    currentUser = users[0];
+    saveState();
+    renderAdminProducts();
+    renderAdminUsers();
+    renderProductsGrid();
+    alert("تمت استعادة البيانات الافتراضية بنجاح.");
+}
 
 function toggleSidebar() {
     sidebar.classList.toggle("hidden");
@@ -1022,7 +1082,7 @@ function populateCategorySelects() {
     newProdCategory.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
 }
 
-// إضافة منتج جديد من لوحة الإدارة
+// إضافة منتج جديد من لوحة الإدارة وحفظه تلقائياً في localStorage
 addProductForm.onsubmit = async function(e) {
     e.preventDefault();
     if (!currentUser || currentUser.role !== "admin") {
@@ -1072,6 +1132,7 @@ addProductForm.onsubmit = async function(e) {
         addons
     });
 
+    saveState();
     adminProductMessage.textContent = "";
     this.reset();
     newProdIcon.value = "🍵";
@@ -1079,7 +1140,7 @@ addProductForm.onsubmit = async function(e) {
     newProdSales.value = "10";
     renderAdminProducts();
     renderProductsGrid();
-    alert("تمت إضافة المنتج وتحديث المتجر مباشرة.");
+    alert("تمت إضافة المنتج وحفظه تلقائياً حتى بعد تحديث الصفحة.");
 };
 
 // عرض وتعديل وحذف المنتجات والأسعار في لوحة المشرف
@@ -1198,12 +1259,13 @@ function renderAdminProducts() {
             prod.image = updatedImg;
             prod.addons = newAddons;
 
+            saveState();
             renderAdminProducts();
             renderProductsGrid();
             if (selectedProductId === prod.id) {
                 openProductDetails(prod.id);
             }
-            alert("تم تحديث بيانات المنتج وسعره في المتجر مباشرة.");
+            alert("تم تحديث بيانات المنتج وسعره وحفظها تلقائياً.");
         };
 
         const delBtn = document.createElement("button");
@@ -1216,6 +1278,7 @@ function renderAdminProducts() {
                 return;
             }
             products.splice(idx, 1);
+            saveState();
             renderAdminProducts();
             renderProductsGrid();
         };
@@ -1252,6 +1315,7 @@ registerForm.onsubmit = function(e) {
         addresses: []
     });
 
+    saveState();
     alert("تم إنشاء الحساب بنجاح");
     this.reset();
     showLogin();
@@ -1276,6 +1340,7 @@ loginForm.onsubmit = function(e) {
     }
 
     currentUser = user;
+    saveState();
     loginMessage.textContent = "";
 
     // التوجيه التلقائي إلى لوحة التحكم عند الدخول بحساب المشرف
@@ -1333,10 +1398,13 @@ function renderAdminUsers() {
                 alert("هذا البريد مستخدم لحساب آخر");
                 return;
             }
+            const wasCurrent = currentUser && currentUser.email === u.email;
             u.name = nameInput.value.trim();
             u.email = newEmail;
             u.phone = phoneInput.value.trim();
             u.role = roleSelect.value;
+            if (wasCurrent) currentUser = u;
+            saveState();
             alert("تم تحديث بيانات المستخدم بنجاح");
             renderAdminUsers();
         };
@@ -1356,6 +1424,7 @@ function renderAdminUsers() {
             delBtn.onclick = () => {
                 if (!currentUser || currentUser.role !== "admin") return;
                 users.splice(index, 1);
+                saveState();
                 renderAdminUsers();
             };
             card.appendChild(delBtn);
@@ -1381,6 +1450,7 @@ function saveProfile() {
     currentUser.name = profileName.value.trim();
     currentUser.email = email;
     currentUser.phone = profilePhone.value.trim();
+    saveState();
 
     alert("تم تحديث بيانات الحساب");
 }
@@ -1395,6 +1465,7 @@ addressForm.onsubmit = function(e) {
         location: location.value.trim()
     });
 
+    saveState();
     this.reset();
     displayAddresses();
 };
@@ -1416,6 +1487,7 @@ function displayAddresses() {
 
         btn.onclick = () => {
             currentUser.addresses.splice(index, 1);
+            saveState();
             displayAddresses();
         };
 
@@ -1427,6 +1499,7 @@ function displayAddresses() {
 
 function logout() {
     currentUser = null;
+    saveState();
     loginForm.reset();
     showLogin();
 }
