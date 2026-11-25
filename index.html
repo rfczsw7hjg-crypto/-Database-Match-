@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ماتشلي — إدارة المنتجات والأسعار</title>
+<title>ماتشلي — متجر الماتشا</title>
 
 <style>
 * { box-sizing: border-box; }
@@ -54,6 +54,7 @@ body {
     font-size: 20px;
     font-weight: bold;
     color: #c45c86;
+    cursor: pointer;
 }
 
 .top-actions {
@@ -348,10 +349,10 @@ hr {
 <header class="topbar">
     <div class="brand-group">
         <button type="button" class="menu-btn" onclick="toggleSidebar()" aria-label="القائمة الجانبية">☰</button>
-        <span class="brand-title">🍵 ماتشلي</span>
+        <span class="brand-title" onclick="showStore('all')">🍵 ماتشلي</span>
     </div>
     <div class="top-actions">
-        <button type="button" class="secondary pill-btn" onclick="showStore()">المتجر</button>
+        <button type="button" class="secondary pill-btn" onclick="showStore('all')">المتجر</button>
         <button type="button" class="secondary pill-btn" onclick="handleAccountNav()">الحساب</button>
     </div>
 </header>
@@ -359,18 +360,21 @@ hr {
 <!-- طبقة إغلاق القائمة الجانبية -->
 <div id="drawerBackdrop" class="drawer-backdrop hidden" onclick="toggleSidebar()"></div>
 
-<!-- القائمة الجانبية -->
+<!-- القائمة الجانبية بالترتيب المطلوب -->
 <aside id="sidebar" class="sidebar hidden">
     <h3>قائمة ماتشلي 🍵</h3>
-    <button type="button" class="nav-item" onclick="navigateFromMenu('store')">🛍️ عرض المنتجات والأسعار</button>
-    <button type="button" class="nav-item" onclick="navigateFromMenu('account')">👤 الحساب والملف الشخصي</button>
-    <button type="button" class="nav-item" onclick="navigateFromMenu('admin')">🛡️ إدارة المنتجات والأسعار (مشرف)</button>
+    <button type="button" class="nav-item" onclick="navigateFromMenu('all')">جميع المنتجات</button>
+    <button type="button" class="nav-item" onclick="navigateFromMenu('drinks')">مشروبات ماتشلي</button>
+    <button type="button" class="nav-item" onclick="navigateFromMenu('desserts')">حلويات</button>
+    <button type="button" class="nav-item" onclick="navigateFromMenu('tools')">أدوات الماتشا</button>
+    <button type="button" class="nav-item" onclick="navigateFromMenu('sets')">المجموعات</button>
+    <button type="button" class="nav-item" onclick="navigateFromMenu('account')">الحساب والملف الشخصي</button>
 </aside>
 
 <div class="page-wrap">
 <div id="mainContainer" class="container wide">
 
-<!-- 1) واجهة عرض المنتجات والأسعار (جزئية عائشة) -->
+<!-- 1) واجهة عرض المنتجات والأسعار -->
 <section id="storeSection">
     <h1>ماتشلي — المنتجات والأسعار 🍵</h1>
     <p class="subtitle">اختاري التصنيف واستعرضي المنتجات والأسعار والإضافات الجانبية</p>
@@ -473,7 +477,7 @@ hr {
     <button type="button" class="danger" onclick="logout()">تسجيل الخروج</button>
 </section>
 
-<!-- 5) قسم لوحة تحكم المشرف: إدارة الحسابات + إدارة المنتجات والأسعار والإضافات -->
+<!-- 5) قسم لوحة تحكم المشرف: إدارة المنتجات والأسعار + الحسابات المسجلة -->
 <section id="adminPanel" class="hidden">
     <h1>لوحة تحكم المشرف — ماتشلي 🛡️</h1>
     <p class="subtitle">إدارة المنتجات والأسعار والإضافات والحسابات المسجلة</p>
@@ -543,12 +547,12 @@ hr {
 </div>
 
 <script>
-// جدول التصنيفات (Categories)
+// جدول التصنيفات (Categories) مطابق لترتيب القائمة
 let categories = [
-    { id: "ceremonial", name: "ماتشا احتفالية" },
-    { id: "drinks", name: "مشروبات" },
+    { id: "drinks", name: "مشروبات ماتشلي" },
     { id: "desserts", name: "حلويات" },
-    { id: "addons", name: "إضافات جانبية" }
+    { id: "tools", name: "أدوات الماتشا" },
+    { id: "sets", name: "المجموعات" }
 ];
 
 let selectedCategoryId = "all";
@@ -558,23 +562,9 @@ let selectedProductId = null;
 let products = [
     {
         id: 1,
-        name: "ماتشا أوجي الاحتفالية",
-        categoryId: "ceremonial",
-        description: "مسحوق ماتشا ياباني فاخر بقوام كريمي ونكهة أومامي متوازنة.",
-        price: 85,
-        stock: 12,
-        image: "",
-        icon: "🍵",
-        addons: [
-            { label: "مضرب خيزران يدوي", price: 35 },
-            { label: "ملعقة قياس خشبية", price: 15 }
-        ]
-    },
-    {
-        id: 2,
         name: "آيس ماتشا لاتيه",
         categoryId: "drinks",
-        description: "ماتشا طازجة مخفوقة مع ثلج وحليب بارد منعش.",
+        description: "ماتشا يابانية فاخرة مخفوقة مع ثلج وحليب بارد منعش.",
         price: 22,
         stock: 25,
         image: "",
@@ -583,6 +573,20 @@ let products = [
             { label: "حليب شوفان", price: 4 },
             { label: "حليب جوز الهند", price: 4 },
             { label: "سيروب فانيلا", price: 3 }
+        ]
+    },
+    {
+        id: 2,
+        name: "ماتشا فرابيه كريمي",
+        categoryId: "drinks",
+        description: "مشروب ماتشا مثلج ومخفوق بقوام غني ولمسة فانيلا.",
+        price: 25,
+        stock: 18,
+        image: "",
+        icon: "🥤",
+        addons: [
+            { label: "كريمة مخفوقة", price: 3 },
+            { label: "جرعة ماتشا إضافية", price: 5 }
         ]
     },
     {
@@ -601,15 +605,29 @@ let products = [
     },
     {
         id: 4,
-        name: "إضافة كريمة الماتشا المخفوقة",
-        categoryId: "addons",
-        description: "إضافة جانبية خفيفة وغنية لتعزيز نكهة المشروبات والحلويات.",
-        price: 5,
-        stock: 30,
+        name: "مضرب خيزران يدوي (تشاسين)",
+        categoryId: "tools",
+        description: "مضرب خيزران تقليدي لتحضير رغوة ماتشا ناعمة ومتجانسة.",
+        price: 45,
+        stock: 15,
         image: "",
-        icon: "✨",
+        icon: "🎋",
         addons: [
-            { label: "حجم مضاعف", price: 3 }
+            { label: "حامل مضرب سيراميك", price: 25 }
+        ]
+    },
+    {
+        id: 5,
+        name: "بوكس ماتشلي المتكامل",
+        categoryId: "sets",
+        description: "مجموعة متكاملة تضم علبة ماتشا احتفالية، وعاء خفق، ومضرب خيزران.",
+        price: 165,
+        stock: 8,
+        image: "",
+        icon: "🎁",
+        addons: [
+            { label: "بطاقة إهداء خاصة", price: 5 },
+            { label: "تغليف هدايا فاخر", price: 12 }
         ]
     }
 ];
@@ -635,22 +653,10 @@ function toggleSidebar() {
 
 function navigateFromMenu(target) {
     toggleSidebar();
-    if (target === "store") {
-        showStore();
-    } else if (target === "account") {
+    if (target === "account") {
         handleAccountNav();
-    } else if (target === "admin") {
-        if (!currentUser) {
-            alert("يرجى تسجيل الدخول بحساب المشرف أولاً للوصول إلى لوحة الإدارة.");
-            showLogin();
-            return;
-        }
-        if (currentUser.role !== "admin") {
-            alert("عذراً، هذه الصفحة مخصصة لصلاحية المشرف فقط.");
-            showProfile();
-            return;
-        }
-        showAdminPanel();
+    } else {
+        showStore(target);
     }
 }
 
@@ -680,7 +686,10 @@ function setContainerWidth(isWide) {
     }
 }
 
-function showStore() {
+function showStore(categoryFilter) {
+    if (categoryFilter) {
+        selectedCategoryId = categoryFilter;
+    }
     hideAllSections();
     setContainerWidth(true);
     storeSection.classList.remove("hidden");
@@ -744,7 +753,7 @@ function renderCategoryFilterBar() {
     const allBtn = document.createElement("button");
     allBtn.type = "button";
     allBtn.className = "cat-btn" + (selectedCategoryId === "all" ? " active" : "");
-    allBtn.textContent = "الكل";
+    allBtn.textContent = "جميع المنتجات";
     allBtn.onclick = () => {
         selectedCategoryId = "all";
         renderCategoryFilterBar();
@@ -822,7 +831,7 @@ function openProductDetails(productId) {
     productDetailsPanel.classList.remove("hidden");
 
     const addonsHtml = (prod.addons && prod.addons.length > 0)
-        ? prod.addons.map((addon, idx) => `
+        ? prod.addons.map(addon => `
             <label class="addon-option">
                 <span class="addon-left">
                     <input type="checkbox" class="addon-check" data-price="${addon.price}" onchange="recalcDetailTotal(${prod.price})">
@@ -917,7 +926,7 @@ function populateCategorySelects() {
     newProdCategory.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
 }
 
-// إضافة منتج جديد من لوحة الإدارة (مع التحقق من صلاحية الأدمن والأسعار والكميات)
+// إضافة منتج جديد من لوحة الإدارة
 addProductForm.onsubmit = async function(e) {
     e.preventDefault();
     if (!currentUser || currentUser.role !== "admin") {
@@ -1142,6 +1151,7 @@ loginForm.onsubmit = function(e) {
     currentUser = user;
     loginMessage.textContent = "";
 
+    // التوجيه التلقائي إلى لوحة التحكم عند الدخول بحساب المشرف
     if (currentUser.role === "admin") {
         showAdminPanel();
     } else {
@@ -1295,7 +1305,7 @@ function logout() {
 }
 
 // بدء العرض بواجهة متجر ماتشلي
-showStore();
+showStore("all");
 </script>
 </body>
 </html>
