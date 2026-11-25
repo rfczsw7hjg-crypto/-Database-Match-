@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>حساب المستخدم</title>
+<title>ماتشلي — إدارة المنتجات والأسعار</title>
 
 <style>
 * { box-sizing: border-box; }
@@ -14,9 +14,111 @@ body {
     background: #fff0f5;
     color: #315443;
     min-height: 100vh;
+}
+
+/* الشريط العلوي مع شعار ماتشلي وزر القائمة الجانبية */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: white;
+    border-bottom: 1px solid #f0dce5;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 3px 14px #286b4a10;
+}
+
+.brand-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu-btn {
+    width: auto;
+    margin: 0;
+    padding: 8px 12px;
+    font-size: 18px;
+    background: #fce4ed;
+    color: #a94f73;
+    border-radius: 10px;
+}
+
+.menu-btn:hover {
+    background: #f8d0df;
+}
+
+.brand-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #c45c86;
+}
+
+.top-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.pill-btn {
+    width: auto;
+    margin: 0;
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 20px;
+}
+
+/* القائمة الجانبية */
+.drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 40;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 270px;
+    max-width: 85vw;
+    height: 100vh;
+    background: white;
+    z-index: 50;
+    padding: 20px;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar h3 {
+    margin: 0 0 10px;
+    text-align: right;
+    color: #c45c86;
+}
+
+.nav-item {
+    width: 100%;
+    text-align: right;
+    margin: 0;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: #eff8f1;
+    color: #315443;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.nav-item:hover {
+    background: #d8efe0;
+}
+
+.page-wrap {
     display: flex;
     justify-content: center;
-    align-items: center;
     padding: 20px;
 }
 
@@ -24,40 +126,45 @@ body {
     background: white;
     width: 100%;
     max-width: 480px;
-    padding: 30px;
+    padding: 28px;
     border-radius: 18px;
     box-shadow: 0 5px 25px #286b4a18;
 }
 
-h1, h2, h3 { text-align: center; color: #c45c86; }
-.subtitle { text-align: center; color: #777; margin-bottom: 25px; }
-
-input, select {
-    width: 100%;
-    padding: 13px;
-    margin: 8px 0 15px;
-    border: 1px solid #e8cbd7;
-    border-radius: 9px;
-    font-size: 15px;
-    background: white;
+.container.wide {
+    max-width: 860px;
 }
 
-input:focus, select:focus {
+h1, h2, h3 { text-align: center; color: #c45c86; }
+.subtitle { text-align: center; color: #777; margin-bottom: 22px; font-size: 14px; }
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 7px 0 14px;
+    border: 1px solid #e8cbd7;
+    border-radius: 9px;
+    font-size: 14px;
+    background: white;
+    font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
     outline: 2px solid #b9dfc5;
 }
 
-label { font-weight: bold; font-size: 14px; }
+label { font-weight: bold; font-size: 14px; display: block; }
 
 button {
     width: 100%;
-    padding: 13px;
+    padding: 12px;
     border: none;
     border-radius: 9px;
     background: #39845c;
     color: white;
-    font-size: 16px;
+    font-size: 15px;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 8px;
 }
 
 button:hover { background: #286b4a; }
@@ -78,7 +185,8 @@ button:hover { background: #286b4a; }
     text-align: center;
     color: #b34f79;
     cursor: pointer;
-    margin-top: 18px;
+    margin-top: 16px;
+    font-size: 14px;
 }
 
 hr {
@@ -87,10 +195,10 @@ hr {
     margin: 22px 0;
 }
 
-.address, .user-card {
+.address, .user-card, .admin-prod-card {
     background: #eff8f1;
     padding: 15px;
-    border-radius: 9px;
+    border-radius: 10px;
     margin: 12px 0;
     border: 1px solid #d5ebd9;
 }
@@ -117,116 +225,396 @@ hr {
     font-size: 14px;
     margin-top: 10px;
 }
+
+/* أزرار فلترة التصنيفات وشبكة المنتجات */
+.category-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.cat-btn {
+    width: auto;
+    margin: 0;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    background: #fce4ed;
+    color: #a94f73;
+}
+
+.cat-btn.active, .cat-btn:hover {
+    background: #39845c;
+    color: white;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+}
+
+.product-card {
+    background: #fff9fb;
+    border: 1px solid #f0dce5;
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-thumb {
+    width: 100%;
+    height: 150px;
+    border-radius: 10px;
+    object-fit: cover;
+    background: #eff8f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 46px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.product-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.price-tag {
+    font-weight: bold;
+    color: #286b4a;
+    font-size: 15px;
+    margin: 6px 0;
+}
+
+.stock-text {
+    font-size: 12px;
+    color: #666;
+}
+
+.detail-box {
+    background: #eff8f1;
+    border: 1px solid #cfe7d4;
+    border-radius: 14px;
+    padding: 18px;
+    margin-top: 16px;
+}
+
+.addon-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin: 8px 0;
+    border: 1px solid #e8cbd7;
+}
+
+.addon-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.addon-left input {
+    width: auto;
+    margin: 0;
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+@media (max-width: 600px) {
+    .two-col {
+        grid-template-columns: 1fr;
+    }
+}
 </style>
 </head>
 
 <body>
-<div class="container">
 
-<!-- قسم تسجيل الدخول -->
-<section id="login">
-<h1>مرحباً بعودتك 🌸</h1>
-<p class="subtitle">سجل الدخول للوصول إلى حسابك</p>
+<!-- شريط علوي ثابت مع زر القائمة الجانبية وشعار ماتشلي -->
+<header class="topbar">
+    <div class="brand-group">
+        <button type="button" class="menu-btn" onclick="toggleSidebar()" aria-label="القائمة الجانبية">☰</button>
+        <span class="brand-title">🍵 ماتشلي</span>
+    </div>
+    <div class="top-actions">
+        <button type="button" class="secondary pill-btn" onclick="showStore()">المتجر</button>
+        <button type="button" class="secondary pill-btn" onclick="handleAccountNav()">الحساب</button>
+    </div>
+</header>
 
-<form id="loginForm">
-<label>الاسم أو البريد الإلكتروني</label>
-<input id="loginName" type="text" placeholder="أدخل اسمك أو بريدك الإلكتروني" required>
+<!-- طبقة إغلاق القائمة الجانبية -->
+<div id="drawerBackdrop" class="drawer-backdrop hidden" onclick="toggleSidebar()"></div>
 
-<label>كلمة المرور</label>
-<input id="loginPassword" type="password" placeholder="أدخل كلمة المرور" required>
+<!-- القائمة الجانبية -->
+<aside id="sidebar" class="sidebar hidden">
+    <h3>قائمة ماتشلي 🍵</h3>
+    <button type="button" class="nav-item" onclick="navigateFromMenu('store')">🛍️ عرض المنتجات والأسعار</button>
+    <button type="button" class="nav-item" onclick="navigateFromMenu('account')">👤 الحساب والملف الشخصي</button>
+    <button type="button" class="nav-item" onclick="navigateFromMenu('admin')">🛡️ إدارة المنتجات والأسعار (مشرف)</button>
+</aside>
 
-<button type="submit">تسجيل الدخول</button>
-</form>
+<div class="page-wrap">
+<div id="mainContainer" class="container wide">
 
-<p class="link" onclick="showRegister()">ليس لديك حساب؟ إنشاء حساب جديد</p>
-<p id="loginMessage" class="message"></p>
+<!-- 1) واجهة عرض المنتجات والأسعار (جزئية عائشة) -->
+<section id="storeSection">
+    <h1>ماتشلي — المنتجات والأسعار 🍵</h1>
+    <p class="subtitle">اختاري التصنيف واستعرضي المنتجات والأسعار والإضافات الجانبية</p>
+
+    <!-- فلترة حسب التصنيف -->
+    <div id="categoryFilterBar" class="category-bar"></div>
+
+    <!-- شبكة المنتجات -->
+    <div id="productsGrid" class="products-grid"></div>
+
+    <!-- تفاصيل المنتج واختيار الإضافات -->
+    <div id="productDetailsPanel" class="detail-box hidden"></div>
 </section>
 
-<!-- قسم إنشاء حساب -->
+<!-- 2) قسم تسجيل الدخول -->
+<section id="login" class="hidden">
+    <h1>مرحباً بعودتك 🌸</h1>
+    <p class="subtitle">سجل الدخول للوصول إلى حسابك في ماتشلي</p>
+
+    <form id="loginForm">
+        <label>الاسم أو البريد الإلكتروني</label>
+        <input id="loginName" type="text" placeholder="أدخل اسمك أو بريدك الإلكتروني" required>
+
+        <label>كلمة المرور</label>
+        <input id="loginPassword" type="password" placeholder="أدخل كلمة المرور" required>
+
+        <button type="submit">تسجيل الدخول</button>
+    </form>
+
+    <p class="link" onclick="showRegister()">ليس لديك حساب؟ إنشاء حساب جديد</p>
+    <p id="loginMessage" class="message"></p>
+</section>
+
+<!-- 3) قسم إنشاء حساب -->
 <section id="register" class="hidden">
-<h1>إنشاء حساب جديد 💗</h1>
-<p class="subtitle">أدخل بياناتك لإنشاء حسابك</p>
+    <h1>إنشاء حساب جديد 💗</h1>
+    <p class="subtitle">أدخل بياناتك لإنشاء حسابك</p>
 
-<form id="registerForm">
-<label>الاسم الكامل</label>
-<input id="regName" type="text" placeholder="الاسم الكامل" required>
+    <form id="registerForm">
+        <label>الاسم الكامل</label>
+        <input id="regName" type="text" placeholder="الاسم الكامل" required>
 
-<label>البريد الإلكتروني</label>
-<input id="regEmail" type="email" placeholder="example@email.com" required>
+        <label>البريد الإلكتروني</label>
+        <input id="regEmail" type="email" placeholder="example@email.com" required>
 
-<label>رقم الجوال</label>
-<input id="regPhone" type="tel" placeholder="05xxxxxxxx" required>
+        <label>رقم الجوال</label>
+        <input id="regPhone" type="tel" placeholder="05xxxxxxxx" required>
 
-<label>كلمة المرور</label>
-<input id="regPassword" type="password" placeholder="8 أحرف على الأقل" required minlength="8">
+        <label>كلمة المرور</label>
+        <input id="regPassword" type="password" placeholder="8 أحرف على الأقل" required minlength="8">
 
-<label>تأكيد كلمة المرور</label>
-<input id="regConfirm" type="password" placeholder="أعد كتابة كلمة المرور" required>
+        <label>تأكيد كلمة المرور</label>
+        <input id="regConfirm" type="password" placeholder="أعد كتابة كلمة المرور" required>
 
-<button type="submit">إنشاء الحساب</button>
-</form>
+        <button type="submit">إنشاء الحساب</button>
+    </form>
 
-<p class="link" onclick="showLogin()">لديك حساب؟ تسجيل الدخول</p>
-<p id="registerMessage" class="message"></p>
+    <p class="link" onclick="showLogin()">لديك حساب؟ تسجيل الدخول</p>
+    <p id="registerMessage" class="message"></p>
 </section>
 
-<!-- قسم الملف الشخصي للعميل -->
+<!-- 4) قسم الملف الشخصي للعميل -->
 <section id="profile" class="hidden">
-<h1>الملف الشخصي 💚</h1>
-<p class="subtitle">إدارة بيانات حسابك</p>
+    <h1>الملف الشخصي 💚</h1>
+    <p class="subtitle">إدارة بيانات حسابك وعناوين التوصيل</p>
 
-<label>الاسم الكامل</label>
-<input id="profileName" type="text">
+    <label>الاسم الكامل</label>
+    <input id="profileName" type="text">
 
-<label>البريد الإلكتروني</label>
-<input id="profileEmail" type="email">
+    <label>البريد الإلكتروني</label>
+    <input id="profileEmail" type="email">
 
-<label>رقم الجوال</label>
-<input id="profilePhone" type="tel">
+    <label>رقم الجوال</label>
+    <input id="profilePhone" type="tel">
 
-<button onclick="saveProfile()">حفظ التعديلات</button>
+    <button type="button" onclick="saveProfile()">حفظ التعديلات</button>
 
-<hr>
-<h2>عناوين التوصيل 📍</h2>
-<div id="addressList"></div>
+    <hr>
+    <h2>عناوين التوصيل 📍</h2>
+    <div id="addressList"></div>
 
-<h3>إضافة عنوان جديد</h3>
-<form id="addressForm">
-<label>المدينة</label>
-<input id="city" type="text" placeholder="المدينة" required>
+    <h3>إضافة عنوان جديد</h3>
+    <form id="addressForm">
+        <label>المدينة</label>
+        <input id="city" type="text" placeholder="المدينة" required>
 
-<label>الحي</label>
-<input id="district" type="text" placeholder="الحي" required>
+        <label>الحي</label>
+        <input id="district" type="text" placeholder="الحي" required>
 
-<label>الشارع</label>
-<input id="street" type="text" placeholder="الشارع" required>
+        <label>الشارع</label>
+        <input id="street" type="text" placeholder="الشارع" required>
 
-<label>الموقع أو وصف العنوان</label>
-<input id="location" type="text" placeholder="وصف الموقع" required>
+        <label>الموقع أو وصف العنوان</label>
+        <input id="location" type="text" placeholder="وصف الموقع" required>
 
-<button type="submit">إضافة العنوان</button>
-</form>
+        <button type="submit">إضافة العنوان</button>
+    </form>
 
-<hr>
-<button class="danger" onclick="logout()">تسجيل الخروج</button>
+    <hr>
+    <button type="button" class="danger" onclick="logout()">تسجيل الخروج</button>
 </section>
 
-<!-- قسم لوحة تحكم المشرف -->
+<!-- 5) قسم لوحة تحكم المشرف: إدارة الحسابات + إدارة المنتجات والأسعار والإضافات -->
 <section id="adminPanel" class="hidden">
-<h1>لوحة تحكم المشرف 🛡️</h1>
-<p class="subtitle">إدارة الحسابات والصلاحيات والتعديلات</p>
+    <h1>لوحة تحكم المشرف — ماتشلي 🛡️</h1>
+    <p class="subtitle">إدارة المنتجات والأسعار والإضافات والحسابات المسجلة</p>
 
-<h2>الحسابات المسجلة 👥</h2>
-<div id="adminUsersList"></div>
+    <!-- نموذج إضافة منتج جديد -->
+    <h3>إضافة منتج جديد</h3>
+    <form id="addProductForm">
+        <div class="two-col">
+            <div>
+                <label>اسم المنتج</label>
+                <input id="newProdName" type="text" placeholder="مثال: ماتشا لاتيه مثلج" required>
+            </div>
+            <div>
+                <label>التصنيف</label>
+                <select id="newProdCategory"></select>
+            </div>
+        </div>
 
-<hr>
-<button class="danger" onclick="logout()">تسجيل الخروج من لوحة المشرف</button>
+        <label>الوصف</label>
+        <textarea id="newProdDesc" rows="2" placeholder="وصف مختصر للمنتج" required></textarea>
+
+        <div class="two-col">
+            <div>
+                <label>السعر (ر.س)</label>
+                <input id="newProdPrice" type="number" step="0.5" min="0" placeholder="22" required>
+            </div>
+            <div>
+                <label>الكمية / التوفر</label>
+                <input id="newProdStock" type="number" step="1" min="0" placeholder="15" required>
+            </div>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <label>رابط أو مسار الصورة (اختياري)</label>
+                <input id="newProdImageUrl" type="text" placeholder="images/matcha.jpg أو https://...">
+            </div>
+            <div>
+                <label>أو رفع ملف صورة من الجهاز (اختياري)</label>
+                <input id="newProdImageFile" type="file" accept="image/*">
+            </div>
+        </div>
+
+        <label>أيقونة بديلة (في حال عدم وجود صورة)</label>
+        <input id="newProdIcon" type="text" value="🍵" placeholder="🍵">
+
+        <label>الإضافات الجانبية (مثال: حليب شوفان:+4, صوص فانيلا:+3)</label>
+        <input id="newProdAddons" type="text" placeholder="حليب شوفان:+4, عسل:+2">
+
+        <button type="submit">إضافة المنتج إلى ماتشلي</button>
+    </form>
+    <p id="adminProductMessage" class="message"></p>
+
+    <hr>
+    <h2>المنتجات والأسعار الحالية 🍵</h2>
+    <div id="adminProductsList"></div>
+
+    <hr>
+    <h2>الحسابات المسجلة 👥</h2>
+    <div id="adminUsersList"></div>
+
+    <hr>
+    <button type="button" class="danger" onclick="logout()">تسجيل الخروج من لوحة المشرف</button>
 </section>
 
 </div>
+</div>
 
 <script>
-// تعريف حساب المشرف الافتراضي
+// جدول التصنيفات (Categories)
+let categories = [
+    { id: "ceremonial", name: "ماتشا احتفالية" },
+    { id: "drinks", name: "مشروبات" },
+    { id: "desserts", name: "حلويات" },
+    { id: "addons", name: "إضافات جانبية" }
+];
+
+let selectedCategoryId = "all";
+let selectedProductId = null;
+
+// جدول المنتجات (Products)
+let products = [
+    {
+        id: 1,
+        name: "ماتشا أوجي الاحتفالية",
+        categoryId: "ceremonial",
+        description: "مسحوق ماتشا ياباني فاخر بقوام كريمي ونكهة أومامي متوازنة.",
+        price: 85,
+        stock: 12,
+        image: "",
+        icon: "🍵",
+        addons: [
+            { label: "مضرب خيزران يدوي", price: 35 },
+            { label: "ملعقة قياس خشبية", price: 15 }
+        ]
+    },
+    {
+        id: 2,
+        name: "آيس ماتشا لاتيه",
+        categoryId: "drinks",
+        description: "ماتشا طازجة مخفوقة مع ثلج وحليب بارد منعش.",
+        price: 22,
+        stock: 25,
+        image: "",
+        icon: "🧊",
+        addons: [
+            { label: "حليب شوفان", price: 4 },
+            { label: "حليب جوز الهند", price: 4 },
+            { label: "سيروب فانيلا", price: 3 }
+        ]
+    },
+    {
+        id: 3,
+        name: "تشيز كيك الماتشا",
+        categoryId: "desserts",
+        description: "طبقة تشيز كيك ناعمة بنكهة الماتشا مع قاعدة بسكويت مقرمشة.",
+        price: 26,
+        stock: 10,
+        image: "",
+        icon: "🍰",
+        addons: [
+            { label: "رشة ماتشا إضافية", price: 2 },
+            { label: "صوص شوكولاتة بيضاء", price: 3 }
+        ]
+    },
+    {
+        id: 4,
+        name: "إضافة كريمة الماتشا المخفوقة",
+        categoryId: "addons",
+        description: "إضافة جانبية خفيفة وغنية لتعزيز نكهة المشروبات والحلويات.",
+        price: 5,
+        stock: 30,
+        image: "",
+        icon: "✨",
+        addons: [
+            { label: "حجم مضاعف", price: 3 }
+        ]
+    }
+];
+
+// حساب المشرف الافتراضي
 let users = [
     {
         name: "المشرف العام",
@@ -240,25 +628,469 @@ let users = [
 
 let currentUser = null;
 
+function toggleSidebar() {
+    sidebar.classList.toggle("hidden");
+    drawerBackdrop.classList.toggle("hidden");
+}
+
+function navigateFromMenu(target) {
+    toggleSidebar();
+    if (target === "store") {
+        showStore();
+    } else if (target === "account") {
+        handleAccountNav();
+    } else if (target === "admin") {
+        if (!currentUser) {
+            alert("يرجى تسجيل الدخول بحساب المشرف أولاً للوصول إلى لوحة الإدارة.");
+            showLogin();
+            return;
+        }
+        if (currentUser.role !== "admin") {
+            alert("عذراً، هذه الصفحة مخصصة لصلاحية المشرف فقط.");
+            showProfile();
+            return;
+        }
+        showAdminPanel();
+    }
+}
+
+function handleAccountNav() {
+    if (!currentUser) {
+        showLogin();
+    } else if (currentUser.role === "admin") {
+        showAdminPanel();
+    } else {
+        showProfile();
+    }
+}
+
 function hideAllSections() {
+    storeSection.classList.add("hidden");
     login.classList.add("hidden");
     register.classList.add("hidden");
     profile.classList.add("hidden");
     adminPanel.classList.add("hidden");
 }
 
+function setContainerWidth(isWide) {
+    if (isWide) {
+        mainContainer.classList.add("wide");
+    } else {
+        mainContainer.classList.remove("wide");
+    }
+}
+
+function showStore() {
+    hideAllSections();
+    setContainerWidth(true);
+    storeSection.classList.remove("hidden");
+    renderCategoryFilterBar();
+    renderProductsGrid();
+    if (selectedProductId) {
+        const exists = products.some(p => p.id === selectedProductId);
+        if (exists) {
+            openProductDetails(selectedProductId);
+        } else {
+            selectedProductId = null;
+            productDetailsPanel.classList.add("hidden");
+        }
+    }
+}
+
 function showLogin() {
     hideAllSections();
+    setContainerWidth(false);
     loginMessage.textContent = "";
     login.classList.remove("hidden");
 }
 
 function showRegister() {
     hideAllSections();
+    setContainerWidth(false);
     registerMessage.textContent = "";
     register.classList.remove("hidden");
 }
 
+function showProfile() {
+    hideAllSections();
+    setContainerWidth(false);
+    profile.classList.remove("hidden");
+
+    profileName.value = currentUser.name;
+    profileEmail.value = currentUser.email;
+    profilePhone.value = currentUser.phone;
+
+    displayAddresses();
+}
+
+function showAdminPanel() {
+    if (!currentUser || currentUser.role !== "admin") {
+        alert("غير مصرح: صلاحية المشرف مطلوبة.");
+        showLogin();
+        return;
+    }
+    hideAllSections();
+    setContainerWidth(true);
+    adminPanel.classList.remove("hidden");
+    populateCategorySelects();
+    renderAdminProducts();
+    renderAdminUsers();
+}
+
+// عرض أزرار الفلترة حسب التصنيف
+function renderCategoryFilterBar() {
+    categoryFilterBar.innerHTML = "";
+
+    const allBtn = document.createElement("button");
+    allBtn.type = "button";
+    allBtn.className = "cat-btn" + (selectedCategoryId === "all" ? " active" : "");
+    allBtn.textContent = "الكل";
+    allBtn.onclick = () => {
+        selectedCategoryId = "all";
+        renderCategoryFilterBar();
+        renderProductsGrid();
+    };
+    categoryFilterBar.appendChild(allBtn);
+
+    categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "cat-btn" + (selectedCategoryId === cat.id ? " active" : "");
+        btn.textContent = cat.name;
+        btn.onclick = () => {
+            selectedCategoryId = cat.id;
+            renderCategoryFilterBar();
+            renderProductsGrid();
+        };
+        categoryFilterBar.appendChild(btn);
+    });
+}
+
+function getCategoryName(catId) {
+    const found = categories.find(c => c.id === catId);
+    return found ? found.name : "عام";
+}
+
+function renderProductVisual(product) {
+    if (product.image) {
+        return `<img src="${product.image}" alt="${product.name}">`;
+    }
+    return `<span>${product.icon || "🍵"}</span>`;
+}
+
+// عرض بطاقات المنتجات والأسعار
+function renderProductsGrid() {
+    productsGrid.innerHTML = "";
+    const filtered = selectedCategoryId === "all"
+        ? products
+        : products.filter(p => p.categoryId === selectedCategoryId);
+
+    if (filtered.length === 0) {
+        productsGrid.innerHTML = `<p class="subtitle">لا توجد منتجات في هذا التصنيف حالياً.</p>`;
+        return;
+    }
+
+    filtered.forEach(prod => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+
+        const stockLabel = prod.stock > 0
+            ? `متوفر (${prod.stock} متاح)`
+            : "غير متوفر حالياً";
+
+        card.innerHTML = `
+            <div>
+                <div class="product-thumb">${renderProductVisual(prod)}</div>
+                <span class="badge">${getCategoryName(prod.categoryId)}</span>
+                <h3 style="margin:4px 0; text-align:right;">${prod.name}</h3>
+                <p style="font-size:13px; color:#555; margin:6px 0;">${prod.description}</p>
+                <div class="price-tag">${Number(prod.price).toFixed(2)} ر.س</div>
+                <div class="stock-text">${stockLabel}</div>
+            </div>
+            <button type="button" onclick="openProductDetails(${prod.id})">التفاصيل والإضافات</button>
+        `;
+        productsGrid.appendChild(card);
+    });
+}
+
+// عرض تفاصيل المنتج واختيار الإضافات وحساب السعر الإجمالي
+function openProductDetails(productId) {
+    const prod = products.find(p => p.id === productId);
+    if (!prod) return;
+    selectedProductId = productId;
+
+    productDetailsPanel.classList.remove("hidden");
+
+    const addonsHtml = (prod.addons && prod.addons.length > 0)
+        ? prod.addons.map((addon, idx) => `
+            <label class="addon-option">
+                <span class="addon-left">
+                    <input type="checkbox" class="addon-check" data-price="${addon.price}" onchange="recalcDetailTotal(${prod.price})">
+                    <span>${addon.label}</span>
+                </span>
+                <strong>+${Number(addon.price).toFixed(2)} ر.س</strong>
+            </label>
+        `).join("")
+        : `<p class="stock-text">لا توجد إضافات جانبية لهذا المنتج.</p>`;
+
+    productDetailsPanel.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+            <h2 style="margin:0; text-align:right;">${prod.name}</h2>
+            <button type="button" class="secondary pill-btn" onclick="closeProductDetails()">إغلاق</button>
+        </div>
+        <p style="margin:8px 0; color:#444;">${prod.description}</p>
+        <p class="stock-text">التصنيف: ${getCategoryName(prod.categoryId)} | التوفر: ${prod.stock}</p>
+        <p><strong>السعر الأساسي:</strong> ${Number(prod.price).toFixed(2)} ر.س</p>
+
+        <h3 style="text-align:right; margin-top:14px;">الإضافات الجانبية</h3>
+        <div>${addonsHtml}</div>
+
+        <hr>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>الإجمالي التقديري:</strong>
+            <strong id="detailTotalPrice" style="color:#286b4a; font-size:18px;">${Number(prod.price).toFixed(2)} ر.س</strong>
+        </div>
+        <button type="button" onclick="confirmSelection('${prod.name.replace(/'/g, "\\'")}', ${prod.stock})">تأكيد الاختيار</button>
+    `;
+
+    productDetailsPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function recalcDetailTotal(basePrice) {
+    let total = Number(basePrice);
+    document.querySelectorAll(".addon-check:checked").forEach(cb => {
+        total += Number(cb.dataset.price || 0);
+    });
+    const el = document.getElementById("detailTotalPrice");
+    if (el) {
+        el.textContent = `${total.toFixed(2)} ر.س`;
+    }
+}
+
+function closeProductDetails() {
+    selectedProductId = null;
+    productDetailsPanel.classList.add("hidden");
+}
+
+function confirmSelection(name, stock) {
+    if (stock <= 0) {
+        alert("عذراً، هذا المنتج غير متوفر حالياً.");
+        return;
+    }
+    const totalText = document.getElementById("detailTotalPrice")?.textContent || "";
+    alert(`تم اختيار (${name}) بإجمالي (${totalText}).`);
+}
+
+// التحقق من صحة الأسعار والكميات (أرقام صحيحة/صالحة وغير سالبة)
+function isValidNonNegativeNumber(val) {
+    const num = Number(val);
+    return val !== "" && !Number.isNaN(num) && Number.isFinite(num) && num >= 0;
+}
+
+function parseAddonsText(rawText) {
+    if (!rawText || !rawText.trim()) return [];
+    return rawText.split(",").map(item => item.trim()).filter(Boolean).map(part => {
+        const pieces = part.split(":");
+        const label = pieces[0].trim();
+        const price = pieces.length > 1 && isValidNonNegativeNumber(pieces[1].trim())
+            ? Number(pieces[1].trim())
+            : 0;
+        return { label, price };
+    }).filter(a => a.label.length > 0);
+}
+
+function formatAddonsText(addons) {
+    if (!addons || addons.length === 0) return "";
+    return addons.map(a => `${a.label}:${a.price}`).join(", ");
+}
+
+function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+function populateCategorySelects() {
+    newProdCategory.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+}
+
+// إضافة منتج جديد من لوحة الإدارة (مع التحقق من صلاحية الأدمن والأسعار والكميات)
+addProductForm.onsubmit = async function(e) {
+    e.preventDefault();
+    if (!currentUser || currentUser.role !== "admin") {
+        alert("صلاحية المشرف مطلوبة لإضافة المنتجات.");
+        return;
+    }
+
+    const name = newProdName.value.trim();
+    const categoryId = newProdCategory.value;
+    const description = newProdDesc.value.trim();
+    const priceVal = newProdPrice.value.trim();
+    const stockVal = newProdStock.value.trim();
+    const icon = newProdIcon.value.trim() || "🍵";
+    const addons = parseAddonsText(newProdAddons.value);
+
+    if (!name || !description) {
+        adminProductMessage.textContent = "يرجى إدخال اسم المنتج ووصفه.";
+        return;
+    }
+    if (!isValidNonNegativeNumber(priceVal) || !isValidNonNegativeNumber(stockVal)) {
+        adminProductMessage.textContent = "يجب أن يكون السعر والكمية أرقاماً صحيحة وغير سالبة.";
+        return;
+    }
+
+    let imageSrc = newProdImageUrl.value.trim();
+    const file = newProdImageFile.files && newProdImageFile.files[0];
+    if (file) {
+        imageSrc = await readFileAsDataUrl(file);
+    }
+
+    const nextId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+    products.push({
+        id: nextId,
+        name,
+        categoryId,
+        description,
+        price: Number(priceVal),
+        stock: Math.floor(Number(stockVal)),
+        image: imageSrc,
+        icon,
+        addons
+    });
+
+    adminProductMessage.textContent = "";
+    this.reset();
+    newProdIcon.value = "🍵";
+    renderAdminProducts();
+    renderProductsGrid();
+    alert("تمت إضافة المنتج وتحديث المتجر مباشرة.");
+};
+
+// عرض وتعديل وحذف المنتجات والأسعار في لوحة المشرف
+function renderAdminProducts() {
+    if (!currentUser || currentUser.role !== "admin") return;
+    adminProductsList.innerHTML = "";
+
+    products.forEach((prod, idx) => {
+        const card = document.createElement("div");
+        card.className = "admin-prod-card";
+
+        const catOptions = categories.map(c =>
+            `<option value="${c.id}" ${c.id === prod.categoryId ? "selected" : ""}>${c.name}</option>`
+        ).join("");
+
+        card.innerHTML = `
+            <div class="product-thumb" style="height:110px;">${renderProductVisual(prod)}</div>
+            <label>اسم المنتج</label>
+            <input type="text" class="edit-p-name" value="${prod.name}">
+
+            <label>التصنيف</label>
+            <select class="edit-p-cat">${catOptions}</select>
+
+            <label>الوصف</label>
+            <input type="text" class="edit-p-desc" value="${prod.description}">
+
+            <div class="two-col">
+                <div>
+                    <label>السعر (ر.س)</label>
+                    <input type="number" step="0.5" min="0" class="edit-p-price" value="${prod.price}">
+                </div>
+                <div>
+                    <label>الكمية</label>
+                    <input type="number" step="1" min="0" class="edit-p-stock" value="${prod.stock}">
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div>
+                    <label>رابط/مسار الصورة</label>
+                    <input type="text" class="edit-p-imgurl" value="${prod.image.startsWith("data:") ? "" : prod.image}" placeholder="مسار أو رابط الصورة">
+                </div>
+                <div>
+                    <label>تغيير الصورة برفع ملف</label>
+                    <input type="file" accept="image/*" class="edit-p-imgfile">
+                </div>
+            </div>
+
+            <label>الإضافات الجانبية</label>
+            <input type="text" class="edit-p-addons" value="${formatAddonsText(prod.addons)}">
+        `;
+
+        const saveBtn = document.createElement("button");
+        saveBtn.type = "button";
+        saveBtn.textContent = "حفظ تعديلات المنتج والسعر";
+        saveBtn.onclick = async () => {
+            if (!currentUser || currentUser.role !== "admin") {
+                alert("صلاحية المشرف مطلوبة.");
+                return;
+            }
+            const newName = card.querySelector(".edit-p-name").value.trim();
+            const newCat = card.querySelector(".edit-p-cat").value;
+            const newDesc = card.querySelector(".edit-p-desc").value.trim();
+            const newPrice = card.querySelector(".edit-p-price").value.trim();
+            const newStock = card.querySelector(".edit-p-stock").value.trim();
+            const newImgUrl = card.querySelector(".edit-p-imgurl").value.trim();
+            const newFile = card.querySelector(".edit-p-imgfile").files[0];
+            const newAddons = parseAddonsText(card.querySelector(".edit-p-addons").value);
+
+            if (!newName || !newDesc) {
+                alert("يرجى تعبئة اسم المنتج والوصف.");
+                return;
+            }
+            if (!isValidNonNegativeNumber(newPrice) || !isValidNonNegativeNumber(newStock)) {
+                alert("السعر والكمية يجب أن يكونا أرقاماً صحيحة وغير سالبة.");
+                return;
+            }
+
+            let updatedImg = prod.image;
+            if (newFile) {
+                updatedImg = await readFileAsDataUrl(newFile);
+            } else if (newImgUrl) {
+                updatedImg = newImgUrl;
+            } else if (!prod.image.startsWith("data:")) {
+                updatedImg = newImgUrl;
+            }
+
+            prod.name = newName;
+            prod.categoryId = newCat;
+            prod.description = newDesc;
+            prod.price = Number(newPrice);
+            prod.stock = Math.floor(Number(newStock));
+            prod.image = updatedImg;
+            prod.addons = newAddons;
+
+            renderAdminProducts();
+            renderProductsGrid();
+            if (selectedProductId === prod.id) {
+                openProductDetails(prod.id);
+            }
+            alert("تم تحديث بيانات المنتج وسعره في المتجر مباشرة.");
+        };
+
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "danger";
+        delBtn.textContent = "حذف المنتج";
+        delBtn.onclick = () => {
+            if (!currentUser || currentUser.role !== "admin") {
+                alert("صلاحية المشرف مطلوبة.");
+                return;
+            }
+            products.splice(idx, 1);
+            renderAdminProducts();
+            renderProductsGrid();
+        };
+
+        card.appendChild(saveBtn);
+        card.appendChild(delBtn);
+        adminProductsList.appendChild(card);
+    });
+}
+
+// تسجيل الحسابات وتسجيل الدخول وإدارة الحسابات
 registerForm.onsubmit = function(e) {
     e.preventDefault();
 
@@ -317,24 +1149,8 @@ loginForm.onsubmit = function(e) {
     }
 };
 
-function showProfile() {
-    hideAllSections();
-    profile.classList.remove("hidden");
-
-    profileName.value = currentUser.name;
-    profileEmail.value = currentUser.email;
-    profilePhone.value = currentUser.phone;
-
-    displayAddresses();
-}
-
-function showAdminPanel() {
-    hideAllSections();
-    adminPanel.classList.remove("hidden");
-    renderAdminUsers();
-}
-
 function renderAdminUsers() {
+    if (!currentUser || currentUser.role !== "admin") return;
     adminUsersList.innerHTML = "";
 
     users.forEach((u, index) => {
@@ -367,8 +1183,10 @@ function renderAdminUsers() {
         `;
 
         let saveBtn = document.createElement("button");
+        saveBtn.type = "button";
         saveBtn.textContent = "حفظ التعديلات";
         saveBtn.onclick = () => {
+            if (!currentUser || currentUser.role !== "admin") return;
             let newEmail = emailInput.value.trim().toLowerCase();
             if (!nameInput.value.trim() || !newEmail || !phoneInput.value.trim()) {
                 alert("يرجى تعبئة جميع الحقول");
@@ -395,9 +1213,11 @@ function renderAdminUsers() {
 
         if (u.email !== "admin@matcha.sa") {
             let delBtn = document.createElement("button");
+            delBtn.type = "button";
             delBtn.className = "danger";
             delBtn.textContent = "حذف الحساب";
             delBtn.onclick = () => {
+                if (!currentUser || currentUser.role !== "admin") return;
                 users.splice(index, 1);
                 renderAdminUsers();
             };
@@ -453,6 +1273,7 @@ function displayAddresses() {
         info.textContent = `${a.city} - ${a.district} - ${a.street} - ${a.location}`;
 
         let btn = document.createElement("button");
+        btn.type = "button";
         btn.className = "danger";
         btn.textContent = "حذف العنوان";
 
@@ -472,6 +1293,9 @@ function logout() {
     loginForm.reset();
     showLogin();
 }
+
+// بدء العرض بواجهة متجر ماتشلي
+showStore();
 </script>
 </body>
 </html>
