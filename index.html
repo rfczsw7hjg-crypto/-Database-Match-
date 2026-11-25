@@ -23,25 +23,26 @@ body {
 .container {
     background: white;
     width: 100%;
-    max-width: 450px;
+    max-width: 480px;
     padding: 30px;
     border-radius: 18px;
     box-shadow: 0 5px 25px #286b4a18;
 }
 
-h1, h2 { text-align: center; color: #c45c86; }
+h1, h2, h3 { text-align: center; color: #c45c86; }
 .subtitle { text-align: center; color: #777; margin-bottom: 25px; }
 
-input {
+input, select {
     width: 100%;
     padding: 13px;
     margin: 8px 0 15px;
     border: 1px solid #e8cbd7;
     border-radius: 9px;
     font-size: 15px;
+    background: white;
 }
 
-input:focus {
+input:focus, select:focus {
     outline: 2px solid #b9dfc5;
 }
 
@@ -66,7 +67,10 @@ button:hover { background: #286b4a; }
     color: #a94f73;
 }
 
+.secondary:hover { background: #f8d0df; }
+
 .danger { background: #d9534f; }
+.danger:hover { background: #b53d39; }
 
 .hidden { display: none; }
 
@@ -83,11 +87,28 @@ hr {
     margin: 22px 0;
 }
 
-.address {
+.address, .user-card {
     background: #eff8f1;
-    padding: 13px;
+    padding: 15px;
     border-radius: 9px;
-    margin: 10px 0;
+    margin: 12px 0;
+    border: 1px solid #d5ebd9;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    background: #fce4ed;
+    color: #a94f73;
+    margin-bottom: 8px;
+}
+
+.badge.admin {
+    background: #39845c;
+    color: white;
 }
 
 .message {
@@ -102,6 +123,7 @@ hr {
 <body>
 <div class="container">
 
+<!-- قسم تسجيل الدخول -->
 <section id="login">
 <h1>مرحباً بعودتك 🌸</h1>
 <p class="subtitle">سجل الدخول للوصول إلى حسابك</p>
@@ -120,6 +142,7 @@ hr {
 <p id="loginMessage" class="message"></p>
 </section>
 
+<!-- قسم إنشاء حساب -->
 <section id="register" class="hidden">
 <h1>إنشاء حساب جديد 💗</h1>
 <p class="subtitle">أدخل بياناتك لإنشاء حسابك</p>
@@ -147,6 +170,7 @@ hr {
 <p id="registerMessage" class="message"></p>
 </section>
 
+<!-- قسم الملف الشخصي للعميل -->
 <section id="profile" class="hidden">
 <h1>الملف الشخصي 💚</h1>
 <p class="subtitle">إدارة بيانات حسابك</p>
@@ -187,22 +211,76 @@ hr {
 <button class="danger" onclick="logout()">تسجيل الخروج</button>
 </section>
 
+<!-- قسم لوحة تحكم المشرف -->
+<section id="adminPanel" class="hidden">
+<h1>لوحة تحكم المشرف 🛡️</h1>
+<p class="subtitle">إدارة الحسابات والصلاحيات والتعديلات</p>
+
+<h3>إضافة حساب جديد</h3>
+<form id="adminAddUserForm">
+<label>الاسم الكامل</label>
+<input id="adminNewName" type="text" placeholder="اسم المستخدم" required>
+
+<label>البريد الإلكتروني</label>
+<input id="adminNewEmail" type="email" placeholder="email@matcha.sa" required>
+
+<label>رقم الجوال</label>
+<input id="adminNewPhone" type="tel" placeholder="05xxxxxxxx" required>
+
+<label>كلمة المرور</label>
+<input id="adminNewPass" type="password" placeholder="كلمة المرور" required>
+
+<label>نوع الصلاحية</label>
+<select id="adminNewRole">
+    <option value="customer">عميل (Customer)</option>
+    <option value="admin">مشرف (Admin)</option>
+</select>
+
+<button type="submit">إضافة الحساب</button>
+</form>
+
+<hr>
+<h2>الحسابات المسجلة 👥</h2>
+<div id="adminUsersList"></div>
+
+<hr>
+<button class="danger" onclick="logout()">تسجيل الخروج من لوحة المشرف</button>
+</section>
+
 </div>
 
 <script>
-let users = [];
+// تعريف حساب المشرف الافتراضي
+let users = [
+    {
+        name: "المشرف العام",
+        email: "admin@matcha.sa",
+        phone: "0500000000",
+        password: "admin123",
+        role: "admin",
+        addresses: []
+    }
+];
+
 let currentUser = null;
 
-function showLogin() {
-    login.classList.remove("hidden");
+function hideAllSections() {
+    login.classList.add("hidden");
     register.classList.add("hidden");
     profile.classList.add("hidden");
+    adminPanel.classList.add("hidden");
+}
+
+function showLogin() {
+    hideAllSections();
+    loginMessage.textContent = "";
+    login.classList.remove("hidden");
 }
 
 function showRegister() {
-    login.classList.add("hidden");
+    hideAllSections();
+    registerMessage.textContent = "";
     register.classList.remove("hidden");
-    profile.classList.add("hidden");
 }
 
 registerForm.onsubmit = function(e) {
@@ -254,12 +332,18 @@ loginForm.onsubmit = function(e) {
     }
 
     currentUser = user;
-    showProfile();
+    loginMessage.textContent = "";
+
+    // التحقق من الصلاحية: إذا كان مشرف يفتح لوحة المشرف، وإلا يفتح الملف الشخصي
+    if (currentUser.role === "admin") {
+        showAdminPanel();
+    } else {
+        showProfile();
+    }
 };
 
 function showProfile() {
-    login.classList.add("hidden");
-    register.classList.add("hidden");
+    hideAllSections();
     profile.classList.remove("hidden");
 
     profileName.value = currentUser.name;
@@ -268,6 +352,112 @@ function showProfile() {
 
     displayAddresses();
 }
+
+function showAdminPanel() {
+    hideAllSections();
+    adminPanel.classList.remove("hidden");
+    renderAdminUsers();
+}
+
+function renderAdminUsers() {
+    adminUsersList.innerHTML = "";
+
+    users.forEach((u, index) => {
+        let card = document.createElement("div");
+        card.className = "user-card";
+
+        let badge = document.createElement("span");
+        badge.className = u.role === "admin" ? "badge admin" : "badge";
+        badge.textContent = u.role === "admin" ? "مشرف (Admin)" : "عميل (Customer)";
+
+        let nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.value = u.name;
+        nameInput.placeholder = "الاسم";
+
+        let emailInput = document.createElement("input");
+        emailInput.type = "email";
+        emailInput.value = u.email;
+        emailInput.placeholder = "البريد الإلكتروني";
+
+        let phoneInput = document.createElement("input");
+        phoneInput.type = "tel";
+        phoneInput.value = u.phone;
+        phoneInput.placeholder = "رقم الجوال";
+
+        let roleSelect = document.createElement("select");
+        roleSelect.innerHTML = `
+            <option value="customer" ${u.role === "customer" ? "selected" : ""}>عميل (Customer)</option>
+            <option value="admin" ${u.role === "admin" ? "selected" : ""}>مشرف (Admin)</option>
+        `;
+
+        let saveBtn = document.createElement("button");
+        saveBtn.textContent = "حفظ التعديلات";
+        saveBtn.onclick = () => {
+            let newEmail = emailInput.value.trim().toLowerCase();
+            if (!nameInput.value.trim() || !newEmail || !phoneInput.value.trim()) {
+                alert("يرجى تعبئة جميع الحقول");
+                return;
+            }
+            if (users.some((other, i) => i !== index && other.email === newEmail)) {
+                alert("هذا البريد مستخدم لحساب آخر");
+                return;
+            }
+            u.name = nameInput.value.trim();
+            u.email = newEmail;
+            u.phone = phoneInput.value.trim();
+            u.role = roleSelect.value;
+            alert("تم تحديث بيانات المستخدم بنجاح");
+            renderAdminUsers();
+        };
+
+        card.appendChild(badge);
+        card.appendChild(nameInput);
+        card.appendChild(emailInput);
+        card.appendChild(phoneInput);
+        card.appendChild(roleSelect);
+        card.appendChild(saveBtn);
+
+        // منع حذف حساب المشرف الأساسي
+        if (u.email !== "admin@matcha.sa") {
+            let delBtn = document.createElement("button");
+            delBtn.className = "danger";
+            delBtn.textContent = "حذف الحساب";
+            delBtn.onclick = () => {
+                users.splice(index, 1);
+                renderAdminUsers();
+            };
+            card.appendChild(delBtn);
+        }
+
+        adminUsersList.appendChild(card);
+    });
+}
+
+adminAddUserForm.onsubmit = function(e) {
+    e.preventDefault();
+
+    let name = adminNewName.value.trim();
+    let email = adminNewEmail.value.trim().toLowerCase();
+    let phone = adminNewPhone.value.trim();
+    let password = adminNewPass.value;
+    let role = adminNewRole.value;
+
+    if (users.some(u => u.email === email || u.phone === phone)) {
+        alert("البريد أو الجوال مسجل مسبقاً");
+        return;
+    }
+
+    users.push({
+        name, email, phone, password,
+        role: role,
+        addresses: []
+    });
+
+    alert("تمت إضافة الحساب بنجاح");
+    this.reset();
+    renderAdminUsers();
+};
 
 function saveProfile() {
     let email = profileEmail.value.trim().toLowerCase();
