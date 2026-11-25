@@ -216,30 +216,6 @@ hr {
 <h1>لوحة تحكم المشرف 🛡️</h1>
 <p class="subtitle">إدارة الحسابات والصلاحيات والتعديلات</p>
 
-<h3>إضافة حساب جديد</h3>
-<form id="adminAddUserForm">
-<label>الاسم الكامل</label>
-<input id="adminNewName" type="text" placeholder="اسم المستخدم" required>
-
-<label>البريد الإلكتروني</label>
-<input id="adminNewEmail" type="email" placeholder="email@matcha.sa" required>
-
-<label>رقم الجوال</label>
-<input id="adminNewPhone" type="tel" placeholder="05xxxxxxxx" required>
-
-<label>كلمة المرور</label>
-<input id="adminNewPass" type="password" placeholder="كلمة المرور" required>
-
-<label>نوع الصلاحية</label>
-<select id="adminNewRole">
-    <option value="customer">عميل (Customer)</option>
-    <option value="admin">مشرف (Admin)</option>
-</select>
-
-<button type="submit">إضافة الحساب</button>
-</form>
-
-<hr>
 <h2>الحسابات المسجلة 👥</h2>
 <div id="adminUsersList"></div>
 
@@ -334,7 +310,6 @@ loginForm.onsubmit = function(e) {
     currentUser = user;
     loginMessage.textContent = "";
 
-    // التحقق من الصلاحية: إذا كان مشرف يفتح لوحة المشرف، وإلا يفتح الملف الشخصي
     if (currentUser.role === "admin") {
         showAdminPanel();
     } else {
@@ -418,7 +393,6 @@ function renderAdminUsers() {
         card.appendChild(roleSelect);
         card.appendChild(saveBtn);
 
-        // منع حذف حساب المشرف الأساسي
         if (u.email !== "admin@matcha.sa") {
             let delBtn = document.createElement("button");
             delBtn.className = "danger";
@@ -433,31 +407,6 @@ function renderAdminUsers() {
         adminUsersList.appendChild(card);
     });
 }
-
-adminAddUserForm.onsubmit = function(e) {
-    e.preventDefault();
-
-    let name = adminNewName.value.trim();
-    let email = adminNewEmail.value.trim().toLowerCase();
-    let phone = adminNewPhone.value.trim();
-    let password = adminNewPass.value;
-    let role = adminNewRole.value;
-
-    if (users.some(u => u.email === email || u.phone === phone)) {
-        alert("البريد أو الجوال مسجل مسبقاً");
-        return;
-    }
-
-    users.push({
-        name, email, phone, password,
-        role: role,
-        addresses: []
-    });
-
-    alert("تمت إضافة الحساب بنجاح");
-    this.reset();
-    renderAdminUsers();
-};
 
 function saveProfile() {
     let email = profileEmail.value.trim().toLowerCase();
