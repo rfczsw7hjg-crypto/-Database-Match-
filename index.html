@@ -113,8 +113,9 @@ body {
     font-weight: bold;
 }
 
-.nav-item:hover {
-    background: #d8efe0;
+.nav-item:hover, .nav-item.active {
+    background: #39845c;
+    color: white;
 }
 
 .page-wrap {
@@ -215,6 +216,12 @@ hr {
     margin-bottom: 8px;
 }
 
+.badge.featured {
+    background: #39845c;
+    color: white;
+    margin-right: 4px;
+}
+
 .badge.admin {
     background: #39845c;
     color: white;
@@ -227,7 +234,7 @@ hr {
     margin-top: 10px;
 }
 
-/* أزرار فلترة التصنيفات وشبكة المنتجات */
+/* أزرار الفرز والترتيب في واجهة المتجر */
 .category-bar {
     display: flex;
     flex-wrap: wrap;
@@ -285,6 +292,14 @@ hr {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.meta-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #777;
+    margin: 4px 0;
 }
 
 .price-tag {
@@ -360,15 +375,15 @@ hr {
 <!-- طبقة إغلاق القائمة الجانبية -->
 <div id="drawerBackdrop" class="drawer-backdrop hidden" onclick="toggleSidebar()"></div>
 
-<!-- القائمة الجانبية بالترتيب المطلوب -->
+<!-- القائمة الجانبية بالتصنيفات المطلوبة -->
 <aside id="sidebar" class="sidebar hidden">
     <h3>قائمة ماتشلي 🍵</h3>
-    <button type="button" class="nav-item" onclick="navigateFromMenu('all')">جميع المنتجات</button>
-    <button type="button" class="nav-item" onclick="navigateFromMenu('drinks')">مشروبات ماتشلي</button>
-    <button type="button" class="nav-item" onclick="navigateFromMenu('desserts')">حلويات</button>
-    <button type="button" class="nav-item" onclick="navigateFromMenu('tools')">أدوات الماتشا</button>
-    <button type="button" class="nav-item" onclick="navigateFromMenu('sets')">المجموعات</button>
-    <button type="button" class="nav-item" onclick="navigateFromMenu('account')">الحساب والملف الشخصي</button>
+    <button type="button" class="nav-item" id="menu-all" onclick="navigateFromMenu('all')">جميع المنتجات</button>
+    <button type="button" class="nav-item" id="menu-drinks" onclick="navigateFromMenu('drinks')">مشروبات ماتشلي</button>
+    <button type="button" class="nav-item" id="menu-desserts" onclick="navigateFromMenu('desserts')">حلويات</button>
+    <button type="button" class="nav-item" id="menu-tools" onclick="navigateFromMenu('tools')">أدوات الماتشا</button>
+    <button type="button" class="nav-item" id="menu-sets" onclick="navigateFromMenu('sets')">المجموعات</button>
+    <button type="button" class="nav-item" id="menu-account" onclick="navigateFromMenu('account')">الحساب والملف الشخصي</button>
 </aside>
 
 <div class="page-wrap">
@@ -376,11 +391,11 @@ hr {
 
 <!-- 1) واجهة عرض المنتجات والأسعار -->
 <section id="storeSection">
-    <h1> منتجات ماتشلي 🍵</h1>
-    <p class="subtitle">اختاري التصنيف واستعرضي المنتجات والأسعار والإضافات الجانبية</p>
+    <h1 id="storeHeading">ماتشلي — جميع المنتجات 🍵</h1>
+    <p class="subtitle">رتّبي المنتجات واستعرضي الأسعار والإضافات الجانبية</p>
 
-    <!-- فلترة حسب التصنيف -->
-    <div id="categoryFilterBar" class="category-bar"></div>
+    <!-- أزرار الفرز والترتيب في واجهة المتجر -->
+    <div id="sortFilterBar" class="category-bar"></div>
 
     <!-- شبكة المنتجات -->
     <div id="productsGrid" class="products-grid"></div>
@@ -512,6 +527,23 @@ hr {
 
         <div class="two-col">
             <div>
+                <label>التقييم (من 5)</label>
+                <input id="newProdRating" type="number" step="0.1" min="0" max="5" value="4.8">
+            </div>
+            <div>
+                <label>عدد المبيعات</label>
+                <input id="newProdSales" type="number" step="1" min="0" value="10">
+            </div>
+        </div>
+
+        <label>ضمن مقترحاتنا؟</label>
+        <select id="newProdRecommended">
+            <option value="true">نعم — يُعرض في مقترحاتنا</option>
+            <option value="false">لا</option>
+        </select>
+
+        <div class="two-col">
+            <div>
                 <label>رابط أو مسار الصورة (اختياري)</label>
                 <input id="newProdImageUrl" type="text" placeholder="images/matcha.jpg أو https://...">
             </div>
@@ -547,7 +579,7 @@ hr {
 </div>
 
 <script>
-// جدول التصنيفات (Categories) مطابق لترتيب القائمة
+// أقسام القائمة الجانبية
 let categories = [
     { id: "drinks", name: "مشروبات ماتشلي" },
     { id: "desserts", name: "حلويات" },
@@ -555,7 +587,17 @@ let categories = [
     { id: "sets", name: "المجموعات" }
 ];
 
+// خيارات الفرز في واجهة المتجر
+let sortOptions = [
+    { id: "recommended", name: "مقترحاتنا" },
+    { id: "bestselling", name: "الأكثر مبيعاً" },
+    { id: "toprated", name: "الأعلى تقييماً" },
+    { id: "price-desc", name: "الأعلى سعراً" },
+    { id: "price-asc", name: "الأقل سعراً" }
+];
+
 let selectedCategoryId = "all";
+let selectedSortId = "recommended";
 let selectedProductId = null;
 
 // جدول المنتجات (Products)
@@ -567,6 +609,9 @@ let products = [
         description: "ماتشا يابانية فاخرة مخفوقة مع ثلج وحليب بارد منعش.",
         price: 22,
         stock: 25,
+        rating: 4.9,
+        sales: 145,
+        recommended: true,
         image: "",
         icon: "🧊",
         addons: [
@@ -582,6 +627,9 @@ let products = [
         description: "مشروب ماتشا مثلج ومخفوق بقوام غني ولمسة فانيلا.",
         price: 25,
         stock: 18,
+        rating: 4.7,
+        sales: 98,
+        recommended: false,
         image: "",
         icon: "🥤",
         addons: [
@@ -596,6 +644,9 @@ let products = [
         description: "طبقة تشيز كيك ناعمة بنكهة الماتشا مع قاعدة بسكويت مقرمشة.",
         price: 26,
         stock: 10,
+        rating: 4.8,
+        sales: 112,
+        recommended: true,
         image: "",
         icon: "🍰",
         addons: [
@@ -610,6 +661,9 @@ let products = [
         description: "مضرب خيزران تقليدي لتحضير رغوة ماتشا ناعمة ومتجانسة.",
         price: 45,
         stock: 15,
+        rating: 4.6,
+        sales: 64,
+        recommended: false,
         image: "",
         icon: "🎋",
         addons: [
@@ -623,6 +677,9 @@ let products = [
         description: "مجموعة متكاملة تضم علبة ماتشا احتفالية، وعاء خفق، ومضرب خيزران.",
         price: 165,
         stock: 8,
+        rating: 5.0,
+        sales: 83,
+        recommended: true,
         image: "",
         icon: "🎁",
         addons: [
@@ -651,9 +708,18 @@ function toggleSidebar() {
     drawerBackdrop.classList.toggle("hidden");
 }
 
+function updateMenuHighlight(activeKey) {
+    document.querySelectorAll(".nav-item").forEach(btn => btn.classList.remove("active"));
+    const targetBtn = document.getElementById("menu-" + activeKey);
+    if (targetBtn) {
+        targetBtn.classList.add("active");
+    }
+}
+
 function navigateFromMenu(target) {
     toggleSidebar();
     if (target === "account") {
+        updateMenuHighlight("account");
         handleAccountNav();
     } else {
         showStore(target);
@@ -661,6 +727,7 @@ function navigateFromMenu(target) {
 }
 
 function handleAccountNav() {
+    updateMenuHighlight("account");
     if (!currentUser) {
         showLogin();
     } else if (currentUser.role === "admin") {
@@ -690,11 +757,18 @@ function showStore(categoryFilter) {
     if (categoryFilter) {
         selectedCategoryId = categoryFilter;
     }
+    updateMenuHighlight(selectedCategoryId);
     hideAllSections();
     setContainerWidth(true);
     storeSection.classList.remove("hidden");
-    renderCategoryFilterBar();
+
+    storeHeading.textContent = selectedCategoryId === "all"
+        ? "ماتشلي — جميع المنتجات 🍵"
+        : `ماتشلي — ${getCategoryName(selectedCategoryId)} 🍵`;
+
+    renderSortBar();
     renderProductsGrid();
+
     if (selectedProductId) {
         const exists = products.some(p => p.id === selectedProductId);
         if (exists) {
@@ -746,32 +820,21 @@ function showAdminPanel() {
     renderAdminUsers();
 }
 
-// عرض أزرار الفلترة حسب التصنيف
-function renderCategoryFilterBar() {
-    categoryFilterBar.innerHTML = "";
+// عرض أزرار الفرز والترتيب في واجهة المتجر
+function renderSortBar() {
+    sortFilterBar.innerHTML = "";
 
-    const allBtn = document.createElement("button");
-    allBtn.type = "button";
-    allBtn.className = "cat-btn" + (selectedCategoryId === "all" ? " active" : "");
-    allBtn.textContent = "جميع المنتجات";
-    allBtn.onclick = () => {
-        selectedCategoryId = "all";
-        renderCategoryFilterBar();
-        renderProductsGrid();
-    };
-    categoryFilterBar.appendChild(allBtn);
-
-    categories.forEach(cat => {
+    sortOptions.forEach(opt => {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "cat-btn" + (selectedCategoryId === cat.id ? " active" : "");
-        btn.textContent = cat.name;
+        btn.className = "cat-btn" + (selectedSortId === opt.id ? " active" : "");
+        btn.textContent = opt.name;
         btn.onclick = () => {
-            selectedCategoryId = cat.id;
-            renderCategoryFilterBar();
+            selectedSortId = opt.id;
+            renderSortBar();
             renderProductsGrid();
         };
-        categoryFilterBar.appendChild(btn);
+        sortFilterBar.appendChild(btn);
     });
 }
 
@@ -787,19 +850,41 @@ function renderProductVisual(product) {
     return `<span>${product.icon || "🍵"}</span>`;
 }
 
+// تطبيق الفلترة حسب القسم ثم الفرز حسب الزر المختار
+function getFilteredAndSortedProducts() {
+    let list = selectedCategoryId === "all"
+        ? [...products]
+        : products.filter(p => p.categoryId === selectedCategoryId);
+
+    switch (selectedSortId) {
+        case "recommended":
+            const rec = list.filter(p => p.recommended);
+            const others = list.filter(p => !p.recommended);
+            return [...rec, ...others];
+        case "bestselling":
+            return list.sort((a, b) => (b.sales || 0) - (a.sales || 0));
+        case "toprated":
+            return list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        case "price-desc":
+            return list.sort((a, b) => Number(b.price) - Number(a.price));
+        case "price-asc":
+            return list.sort((a, b) => Number(a.price) - Number(b.price));
+        default:
+            return list;
+    }
+}
+
 // عرض بطاقات المنتجات والأسعار
 function renderProductsGrid() {
     productsGrid.innerHTML = "";
-    const filtered = selectedCategoryId === "all"
-        ? products
-        : products.filter(p => p.categoryId === selectedCategoryId);
+    const displayed = getFilteredAndSortedProducts();
 
-    if (filtered.length === 0) {
-        productsGrid.innerHTML = `<p class="subtitle">لا توجد منتجات في هذا التصنيف حالياً.</p>`;
+    if (displayed.length === 0) {
+        productsGrid.innerHTML = `<p class="subtitle">لا توجد منتجات في هذا القسم حالياً.</p>`;
         return;
     }
 
-    filtered.forEach(prod => {
+    displayed.forEach(prod => {
         const card = document.createElement("div");
         card.className = "product-card";
 
@@ -807,12 +892,23 @@ function renderProductsGrid() {
             ? `متوفر (${prod.stock} متاح)`
             : "غير متوفر حالياً";
 
+        const recBadge = prod.recommended
+            ? `<span class="badge featured">مقترح</span>`
+            : "";
+
         card.innerHTML = `
             <div>
                 <div class="product-thumb">${renderProductVisual(prod)}</div>
-                <span class="badge">${getCategoryName(prod.categoryId)}</span>
+                <div>
+                    <span class="badge">${getCategoryName(prod.categoryId)}</span>
+                    ${recBadge}
+                </div>
                 <h3 style="margin:4px 0; text-align:right;">${prod.name}</h3>
                 <p style="font-size:13px; color:#555; margin:6px 0;">${prod.description}</p>
+                <div class="meta-row">
+                    <span>⭐ ${Number(prod.rating || 0).toFixed(1)}</span>
+                    <span>المبيعات: ${prod.sales || 0}</span>
+                </div>
                 <div class="price-tag">${Number(prod.price).toFixed(2)} ر.س</div>
                 <div class="stock-text">${stockLabel}</div>
             </div>
@@ -848,7 +944,7 @@ function openProductDetails(productId) {
             <button type="button" class="secondary pill-btn" onclick="closeProductDetails()">إغلاق</button>
         </div>
         <p style="margin:8px 0; color:#444;">${prod.description}</p>
-        <p class="stock-text">التصنيف: ${getCategoryName(prod.categoryId)} | التوفر: ${prod.stock}</p>
+        <p class="stock-text">التصنيف: ${getCategoryName(prod.categoryId)} | التقييم: ⭐ ${Number(prod.rating || 0).toFixed(1)} | التوفر: ${prod.stock}</p>
         <p><strong>السعر الأساسي:</strong> ${Number(prod.price).toFixed(2)} ر.س</p>
 
         <h3 style="text-align:right; margin-top:14px;">الإضافات الجانبية</h3>
@@ -890,7 +986,6 @@ function confirmSelection(name, stock) {
     alert(`تم اختيار (${name}) بإجمالي (${totalText}).`);
 }
 
-// التحقق من صحة الأسعار والكميات (أرقام صحيحة/صالحة وغير سالبة)
 function isValidNonNegativeNumber(val) {
     const num = Number(val);
     return val !== "" && !Number.isNaN(num) && Number.isFinite(num) && num >= 0;
@@ -939,6 +1034,9 @@ addProductForm.onsubmit = async function(e) {
     const description = newProdDesc.value.trim();
     const priceVal = newProdPrice.value.trim();
     const stockVal = newProdStock.value.trim();
+    const ratingVal = newProdRating.value.trim();
+    const salesVal = newProdSales.value.trim();
+    const recommended = newProdRecommended.value === "true";
     const icon = newProdIcon.value.trim() || "🍵";
     const addons = parseAddonsText(newProdAddons.value);
 
@@ -965,6 +1063,9 @@ addProductForm.onsubmit = async function(e) {
         description,
         price: Number(priceVal),
         stock: Math.floor(Number(stockVal)),
+        rating: isValidNonNegativeNumber(ratingVal) ? Math.min(5, Number(ratingVal)) : 4.5,
+        sales: isValidNonNegativeNumber(salesVal) ? Math.floor(Number(salesVal)) : 0,
+        recommended,
         image: imageSrc,
         icon,
         addons
@@ -973,6 +1074,8 @@ addProductForm.onsubmit = async function(e) {
     adminProductMessage.textContent = "";
     this.reset();
     newProdIcon.value = "🍵";
+    newProdRating.value = "4.8";
+    newProdSales.value = "10";
     renderAdminProducts();
     renderProductsGrid();
     alert("تمت إضافة المنتج وتحديث المتجر مباشرة.");
@@ -1015,6 +1118,23 @@ function renderAdminProducts() {
 
             <div class="two-col">
                 <div>
+                    <label>التقييم (من 5)</label>
+                    <input type="number" step="0.1" min="0" max="5" class="edit-p-rating" value="${prod.rating || 4.5}">
+                </div>
+                <div>
+                    <label>عدد المبيعات</label>
+                    <input type="number" step="1" min="0" class="edit-p-sales" value="${prod.sales || 0}">
+                </div>
+            </div>
+
+            <label>ضمن مقترحاتنا؟</label>
+            <select class="edit-p-rec">
+                <option value="true" ${prod.recommended ? "selected" : ""}>نعم — مقترح</option>
+                <option value="false" ${!prod.recommended ? "selected" : ""}>لا</option>
+            </select>
+
+            <div class="two-col">
+                <div>
                     <label>رابط/مسار الصورة</label>
                     <input type="text" class="edit-p-imgurl" value="${prod.image.startsWith("data:") ? "" : prod.image}" placeholder="مسار أو رابط الصورة">
                 </div>
@@ -1041,6 +1161,9 @@ function renderAdminProducts() {
             const newDesc = card.querySelector(".edit-p-desc").value.trim();
             const newPrice = card.querySelector(".edit-p-price").value.trim();
             const newStock = card.querySelector(".edit-p-stock").value.trim();
+            const newRating = card.querySelector(".edit-p-rating").value.trim();
+            const newSales = card.querySelector(".edit-p-sales").value.trim();
+            const newRec = card.querySelector(".edit-p-rec").value === "true";
             const newImgUrl = card.querySelector(".edit-p-imgurl").value.trim();
             const newFile = card.querySelector(".edit-p-imgfile").files[0];
             const newAddons = parseAddonsText(card.querySelector(".edit-p-addons").value);
@@ -1068,6 +1191,9 @@ function renderAdminProducts() {
             prod.description = newDesc;
             prod.price = Number(newPrice);
             prod.stock = Math.floor(Number(newStock));
+            prod.rating = isValidNonNegativeNumber(newRating) ? Math.min(5, Number(newRating)) : prod.rating;
+            prod.sales = isValidNonNegativeNumber(newSales) ? Math.floor(Number(newSales)) : prod.sales;
+            prod.recommended = newRec;
             prod.image = updatedImg;
             prod.addons = newAddons;
 
